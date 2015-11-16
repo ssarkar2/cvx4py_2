@@ -323,16 +323,11 @@ class cvxParser(object):
                 msg = "Unknown identifier '%s'" % p[1]
                 self._show_err(msg, p.lineno(1), p.lexpos(1))
                 raise ParseError(msg)
-            elif variable:
-                msg = "Unknown error: '%s' names *both* a variable and parameter" % p[1]
-                self._show_err(msg, p.lineno(1), p.lexpos(1))
-                raise ParseError(msg)
+
             elif variable :
                 p[0] = variable
                 self.variables[p[1]] = variable
-            elif parameter and not variable:
-                p[0] = parameter
-                self.parameters[p[1]] = parameter
+
 
     def p_error(self, t):
         print("Syntax error at '%s'" % t.value)
