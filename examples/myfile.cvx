@@ -1,0 +1,21 @@
+cvx_begin
+    variable x(n);
+    dual variable y;
+    minimize( c' * x );
+    subject to
+        y : A * x <= b;
+cvx_end
+hi %hello
+
+=
+==
+>
+<
+>=
+<=
+
+65
+0.65
+.5
+5.5
+5.65
