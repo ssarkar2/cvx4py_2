@@ -113,7 +113,7 @@ class cvxParser(object):
         constr = ProgramConstraints(constraints)
         data = ProgramData(self.variables)
         p[0] = SOCP(p[2], constr, data)
-        print 'in p_program', p[0]
+        print 'in p_program', p[0],p[1]
         print 'end of prog'
 
     def p_program_empty(self,p):
