@@ -105,16 +105,27 @@ class cvxParser(object):
 
 
     def p_program(self,p):
-        '''program : statements objective statements
-                   | statements objective
+        '''program :  cvxbegin statements objective statements cvxend
+                   |  cvxbegin statements objective cvxend
         '''
-        constraints = p[1]
-        if len(p) > 3: constraints.extend(p[3])
+        print p[0], p[1], p[2], p[3], p[4]
+        print 'herexx'
+        constraints = p[2]
+        if len(p) > 5: constraints.extend(p[4])  #5 because-->  program : CVX_BEGIN statements objective CVX_END
         constr = ProgramConstraints(constraints)
         data = ProgramData(self.variables)
-        p[0] = SOCP(p[2], constr, data)
-        print 'in p_program', p[0],p[1]
+        p[0] = SOCP(p[3], constr, data)
+        print 'in p_program', p[0]
         print 'end of prog'
+
+
+    def p_cvxbegin(self, p):   #TO DO: may need to expand this function to include GP mode
+        '''cvxbegin : CVX_BEGIN'''
+        pass
+
+    def p_cvxend(self,p):
+        '''cvxend : CVX_END NL'''
+        pass
 
     def p_program_empty(self,p):
         'program : empty'

@@ -7,7 +7,7 @@ class cvx4py(object):
             with open(cvxProgram, 'r') as cvxProg:
                 self.cvxProgramString = cvxProg.read()
         # always append a newline to the end
-        self.cvxProgramString = self.cvxProgramString.split('\n')
+        self.cvxProgramString = self.cvxProgramString.strip().split('\n')
         self.cvxProgramString = '\n'.join(line.strip() for line in self.cvxProgramString)
         self.cvxProgramString += '\n'
         self.locals = locals
