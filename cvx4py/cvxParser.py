@@ -120,7 +120,7 @@ class cvxParser(object):
 
 
     def p_cvxbegin(self, p):   #TO DO: may need to expand this function to include GP mode
-        '''cvxbegin : CVX_BEGIN'''
+        '''cvxbegin : CVX_BEGIN NL'''
         pass
 
     def p_cvxend(self,p):
@@ -196,10 +196,12 @@ class cvxParser(object):
 
     def p_array_identifier_scalar(self, p):
         '''array : ID
-                | ID LPAREN RPAREN
+                 | ID LPAREN RPAREN
         '''
         self._check_if_defined(p[1], p.lineno(1), p.lexpos(1))
         p[0] = (p[1],Scalar())
+        print 'helo array'
+
      # for declaring multiple variables
     def p_arraylist_list(self,p):
         'arraylist : arraylist array'
