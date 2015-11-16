@@ -323,9 +323,9 @@ class cvxParser(object):
             print 'here1'
             p[0] = Number(float(p[1]))
         elif isinstance(p[1], int):
-            print 'here2'
-            p[0] = Number(int(p[1]))
 
+            p[0] = Number(int(p[1]))
+            print 'here2',p[0]
         else:   #### check this and resolve this
             variable = self.decl_variables.get(p[1], None)
             print self.decl_variables
