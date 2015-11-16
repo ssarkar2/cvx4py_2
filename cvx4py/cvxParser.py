@@ -1,8 +1,11 @@
-
-from . exceptions import ParseError
 from cvxLexer import cvxLexer
 from ply import yacc
-from . ast.expressions import Number, Parameter, Variable #, Sum, Transpose
+from . exceptions import ParseError
+from . ast.expressions import Number, Parameter, Variable, Sum, Transpose
+from . ast.atoms import atoms
+from . ast import SOCP, ProgramData, ProgramConstraints, ProgramObjective
+from . properties.sign import Neither, Positive, Negative
+from . properties.shape import Scalar, Shape, isscalar
 #import ast
 #http://www.google.com/url?q=http%3A%2F%2Fcvxr.com%2Fcvx%2Fdoc%2Ffuncref.html&sa=D&sntz=1&usg=AFQjCNEskkaqwhUSwDLxA59azIaw2jSIyQ
 
@@ -32,7 +35,7 @@ class cvxParser(object):
         self.tokens = self.lexerObj.tokens
         self.parserObj = yacc.yacc(module = self)  #define rules and uncomment this line to build parser.
 
-        self.decl_parameters = {}
+
         self.decl_variables = {}
         self.decl_dimensions = set()
         self.decl_dual_variables = set()
@@ -41,7 +44,7 @@ class cvxParser(object):
         # self.decl_dimensions keep track of *declared* variables, parameters,
         # and dimensions, self.parameters, self.variables, and self.dimensions
         # keep track of *used* variables, parameters, and dimensions
-        self.parameters = {}
+
         self.variables = {}
         self.dimensions = set()
         self.dual_variables = set()
@@ -81,8 +84,7 @@ class cvxParser(object):
 
     def _name_exists(self,s):
         return (s in self.decl_dimensions) or \
-               (s in self.decl_variables.keys()) or \
-               (s in self.decl_parameters.keys())
+               (s in self.decl_variables.keys())
 
 
     def _check_if_defined(self, identifier, lineno, lexpos):
@@ -101,6 +103,7 @@ class cvxParser(object):
                 raise ParseError(msg)
 
 
+
     def p_program(self,p):
         '''program : statements objective statements
                    | statements objective
@@ -109,7 +112,9 @@ class cvxParser(object):
         if len(p) > 3: constraints.extend(p[3])
         constr = ProgramConstraints(constraints)
         data = ProgramData(self.variables)
-        p[0] = codegen(p[2], constr, data)
+        p[0] = SOCP(p[2], constr, data)
+        print 'in p_program', p[0]
+        print 'end of prog'
 
     def p_program_empty(self,p):
         'program : empty'
@@ -124,6 +129,7 @@ class cvxParser(object):
         '''statements : statement NL
                       | statement SEMICOLON'''
         p[0] = p[1]
+        print 'in p_statements_statement', p[0]
 
     def p_statements_many_statement(self,p):
         '''statements : statements SEMICOLON statement NL
@@ -154,6 +160,7 @@ class cvxParser(object):
     def p_create_identifier(self,p):
         'create : VARIABLE array'
         (name, shape) = p[2]
+        print 'heloooooo'
         if(p[1] == 'variable'):
             self.decl_variables[name] = Variable(name, shape)
 
@@ -182,7 +189,7 @@ class cvxParser(object):
         '''
         self._check_if_defined(p[1], p.lineno(1), p.lexpos(1))
         p[0] = (p[1],Scalar())
-     # for declaring multiple variables, parameters
+     # for declaring multiple variables
     def p_arraylist_list(self,p):
         'arraylist : arraylist array'
         p[0] = p[1] + [p[2]]
@@ -259,7 +266,10 @@ class cvxParser(object):
 
     def p_expression_add(self,p):
         'expression : expression PLUS expression'
+        print 'here add'
         p[0] = p[1] + p[3] # expression + epxression
+        print 'in p_expression_add', p[0]
+        print p[1], p[3], p[2]
 
     def p_expression_minus(self,p):
         'expression : expression MINUS expression'
@@ -299,12 +309,15 @@ class cvxParser(object):
                       | ID'''
         # these are leaves in the expression tree
         if isinstance(p[1], float):
-            p[0] = Number(p[1])
-        elif isinstance(p[1], int):
+            print 'here1'
             p[0] = Number(float(p[1]))
+        elif isinstance(p[1], int):
+            print 'here2'
+            p[0] = Number(int(p[1]))
 
         else:   #### check this and resolve this
             variable = self.decl_variables.get(p[1], None)
+            print self.decl_variables
 
             if not variable:
                 msg = "Unknown identifier '%s'" % p[1]

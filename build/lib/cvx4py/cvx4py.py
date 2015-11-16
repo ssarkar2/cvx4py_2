@@ -16,7 +16,8 @@ class cvx4py(object):
 
     def parse(self):
         self.parserObj = cvxParser()  #create a parser class and hen call the aprse function on it.
-        self.parserObj.parse(self.cvxProgramString)
+        x = self.parserObj.parse(self.cvxProgramString)
+        print x
 
     def solve(self):
         print "solving..."
