@@ -1,5 +1,0 @@
-setup.py
-src/cvx4py.egg-info/PKG-INFO
-src/cvx4py.egg-info/SOURCES.txt
-src/cvx4py.egg-info/dependency_links.txt
-src/cvx4py.egg-info/top_level.txt
