@@ -27,6 +27,17 @@ cvx_end
 """
 '''
 
+#doesnt work
+string = """
+cvx_begin
+variable d
+dual variable l
+minimize d
+l:d >= 0
+cvx_end
+"""
+
+
 A = np.array([[ 1., 2.], [ 0., 0.], [ 1., 3.]])
 prob = cvx4py(string, 0, locals())
 prob.solve();
