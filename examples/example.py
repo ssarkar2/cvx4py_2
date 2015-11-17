@@ -8,20 +8,12 @@ from cvx4py import cvx4py
 #works ok
 string = """
 cvx_begin
-variable d
-minimize d
-5 >= d >= 0
-cvx_end
-"""
-
-#doesnt work
-string = """
-cvx_begin
 variable d % hello0
 minimize d
 5 >= d >= 0
 cvx_end
 """
+
 
 '''
 #doesnt work
