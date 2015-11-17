@@ -1,4 +1,10 @@
-from cvxParser import cvxParser
+from . cvxParser import cvxParser
+
+from . helpers import profile, default_locals
+from . exceptions import DCPError, QCMLException
+from . ast.expressions import Variable
+from . ast import NodeVisitor
+import sys
 class cvx4py(object):
     def __init__(self, cvxProgram, readFromFile, locals):
         if readFromFile == 0:
@@ -13,16 +19,18 @@ class cvx4py(object):
         self.locals = locals
 
 
-
-    def parse(self):
-        self.parserObj = cvxParser()  #create a parser class and hen call the aprse function on it.
-        x = self.parserObj.parse(self.cvxProgramString)
-        print x
-
     def solve(self):
         print "solving..."
         print self.cvxProgramString
-        self.program = self.parse()
+
+        self.parserObj = cvxParser()  #create a parser class and hen call the aprse function on it.
+        self.program = self.parserObj.parse(self.cvxProgramString)
+        print self.program
+
+        self.program.canonicalize()
+        print self.program
+
+
 
 
 

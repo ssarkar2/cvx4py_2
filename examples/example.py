@@ -8,7 +8,8 @@ from cvx4py import cvx4py
 string = """
 cvx_begin
 variable d
-maximize d
+minimize d
+d >= 0
 cvx_end
 """
 

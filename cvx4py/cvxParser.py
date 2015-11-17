@@ -108,15 +108,12 @@ class cvxParser(object):
         '''program :  cvxbegin statements objective statements cvxend
                    |  cvxbegin statements objective cvxend
         '''
-        print p[0], p[1], p[2], p[3], p[4]
-        print 'herexx'
         constraints = p[2]
         if len(p) > 5: constraints.extend(p[4])  #5 because-->  program : CVX_BEGIN statements objective CVX_END
         constr = ProgramConstraints(constraints)
         data = ProgramData(self.variables)
         p[0] = SOCP(p[3], constr, data)
-        print 'in p_program', p[0]
-        print 'end of prog'
+
 
 
     def p_cvxbegin(self, p):   #TO DO: may need to expand this function to include GP mode
@@ -140,7 +137,7 @@ class cvxParser(object):
         '''statements : statement NL
                       | statement SEMICOLON'''
         p[0] = p[1]
-        print 'in p_statements_statement', p[0]
+
 
     def p_statements_many_statement(self,p):
         '''statements : statements SEMICOLON statement NL
@@ -171,7 +168,6 @@ class cvxParser(object):
     def p_create_identifier(self,p):
         'create : VARIABLE array'
         (name, shape) = p[2]
-        print 'heloooooo'
         if(p[1] == 'variable'):
             self.decl_variables[name] = Variable(name, shape)
 
@@ -200,7 +196,7 @@ class cvxParser(object):
         '''
         self._check_if_defined(p[1], p.lineno(1), p.lexpos(1))
         p[0] = (p[1],Scalar())
-        print 'helo array'
+
 
      # for declaring multiple variables
     def p_arraylist_list(self,p):
@@ -281,8 +277,7 @@ class cvxParser(object):
         'expression : expression PLUS expression'
         print 'here add'
         p[0] = p[1] + p[3] # expression + epxression
-        print 'in p_expression_add', p[0]
-        print p[1], p[3], p[2]
+
 
     def p_expression_minus(self,p):
         'expression : expression MINUS expression'
@@ -325,9 +320,7 @@ class cvxParser(object):
             print 'here1'
             p[0] = Number(float(p[1]))
         elif isinstance(p[1], int):
-
             p[0] = Number(int(p[1]))
-            print 'here2',p[0]
         else:   #### check this and resolve this
             variable = self.decl_variables.get(p[1], None)
             print self.decl_variables
