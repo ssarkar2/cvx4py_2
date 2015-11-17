@@ -30,7 +30,8 @@ allows qq(2) (multi dimension variable)
 allows parameters (a)
 chained constraints and dual constraints
 separation of statements by ; and ,
-inequalities involving
+inequalities involving multivalues vars (q >= 0)
+ineqs with parameters (a*qq >= 0)
 '''
 string = """
 cvx_begin
