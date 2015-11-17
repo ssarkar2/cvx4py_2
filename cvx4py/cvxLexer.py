@@ -52,7 +52,7 @@ class cvxLexer(object):
 
     def t_COMMENT(self, t):  #ignore anything after this, till newline  #http://blog.ostermiller.org/find-comment
         r'\%.*'
-        return t
+        t.lineno += t.value.count('\n')
 
     #keep defination of FLOAT above that of INT (precedence)
     def t_FLOAT(self, t):

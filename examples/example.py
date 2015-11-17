@@ -5,7 +5,8 @@
 import numpy as np
 from cvx4py import cvx4py
 
-string = """  %works ok
+#works ok
+string = """
 cvx_begin
 variable d
 minimize d
@@ -13,15 +14,18 @@ minimize d
 cvx_end
 """
 
-string = """  %doesnt work
+#doesnt work
+string = """
 cvx_begin
-variable d
+variable d % hello0
 minimize d
-5 >= d >= 0  %hello0
+5 >= d >= 0
 cvx_end
 """
 
-string = """  %doesnt work
+'''
+#doesnt work
+string = """
 cvx_begin
 variable d
 minimize d
@@ -29,6 +33,7 @@ minimize d
 4 <= d
 cvx_end
 """
+'''
 
 A = np.array([[ 1., 2.], [ 0., 0.], [ 1., 3.]])
 prob = cvx4py(string, 0, locals())
