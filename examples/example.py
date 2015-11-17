@@ -5,11 +5,28 @@
 import numpy as np
 from cvx4py import cvx4py
 
-string = """
+string = """  %works ok
 cvx_begin
 variable d
 minimize d
 5 >= d >= 0
+cvx_end
+"""
+
+string = """  %doesnt work
+cvx_begin
+variable d
+minimize d
+5 >= d >= 0  %hello0
+cvx_end
+"""
+
+string = """  %doesnt work
+cvx_begin
+variable d
+minimize d
+5 >= d >= 0
+4 <= d
 cvx_end
 """
 

@@ -179,11 +179,13 @@ class cvxParser(object):
 
     def p_create_dual_variable(self, p):
         'create : DUAL VARIABLE ID'
+        print 'helloo'
         self._check_if_defined(p[3], p.lineno(3), p.lexpos(3))
         self.decl_dual_variables.add(p[3])
 
     def p_create_dual_variables(self, p):
         'create : DUAL VARIABLES idlist'
+        print 'helloox'
         self.decl_dual_variables.update(p[3])
 
     def p_array_identifier(self,p):
@@ -272,9 +274,6 @@ class cvxParser(object):
             # a constraint is a singleton list
             p[3][0].dual_var = p[1]
         p[0] = p[3]
-
-
-    #to do  Chain constraints
 
 
 
