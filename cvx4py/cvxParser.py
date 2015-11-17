@@ -135,13 +135,18 @@ class cvxParser(object):
 
     def p_statements_statement(self,p):
         '''statements : statement NL
-                      | statement SEMICOLON'''
+                      | statement SEMICOLON
+                      | statement COMMA
+                      | statement SEMICOLON NL
+        '''
         p[0] = p[1]
 
 
     def p_statements_many_statement(self,p):
-        '''statements : statements SEMICOLON statement NL
-                        | statements COMMA statement NL
+        '''statements : statements  statement NL
+                      | statements  statement SEMICOLON
+                      | statements  statement COMMA
+                      | statements  statement SEMICOLON NL
         '''
         p[0] = []
         if p[1] is not None: p[0].extend(p[1])
@@ -155,7 +160,6 @@ class cvxParser(object):
                      | empty
         '''
         #TO DO: add constraint, dual constraint and chained constrait to statement    | chained_constraint   | constraint  | dual_constraint
-
         if p[1] is not None: p[0] = p[1]
         else: p[0] = []
 
@@ -178,14 +182,13 @@ class cvxParser(object):
             self.decl_variables.update({name: Variable(name, shape) for (name,shape) in p[2]})
 
     def p_create_dual_variable(self, p):
-        'create : DUAL VARIABLE ID'
-        print 'helloo'
+        """create : DUAL VARIABLE ID"""
         self._check_if_defined(p[3], p.lineno(3), p.lexpos(3))
         self.decl_dual_variables.add(p[3])
 
+
     def p_create_dual_variables(self, p):
         'create : DUAL VARIABLES idlist'
-        print 'helloox'
         self.decl_dual_variables.update(p[3])
 
     def p_array_identifier(self,p):
@@ -279,7 +282,6 @@ class cvxParser(object):
 
     def p_expression_add(self,p):
         'expression : expression PLUS expression'
-        print 'here add'
         p[0] = p[1] + p[3] # expression + epxression
 
 
@@ -321,7 +323,6 @@ class cvxParser(object):
                       | ID'''
         # these are leaves in the expression tree
         if isinstance(p[1], float):
-            print 'here1'
             p[0] = Number(float(p[1]))
         elif isinstance(p[1], int):
             p[0] = Number(int(p[1]))

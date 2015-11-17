@@ -75,7 +75,6 @@ class cvxLexer(object):
     def t_ID(self, t):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
         t.type = self.reserved.get(t.value,'ID')    # Check for reserved words
-        print t.type
         return t
 
     # A string containing ignored characters (spaces and tabs)
