@@ -29,13 +29,13 @@ class cvxParser(object):
     )
 
 
-    def __init__(self):
+    def __init__(self, locals = {}):
         self.lexerObj = cvxLexer()
         self.lexerObj.buildLex()
         self.tokens = self.lexerObj.tokens
         self.parserObj = yacc.yacc(module = self)  #define rules and uncomment this line to build parser.
 
-
+        self.decl_parameters = {}
         self.decl_variables = {}
         self.decl_dimensions = set()
         self.decl_dual_variables = set()
@@ -44,11 +44,11 @@ class cvxParser(object):
         # self.decl_dimensions keep track of *declared* variables, parameters,
         # and dimensions, self.parameters, self.variables, and self.dimensions
         # keep track of *used* variables, parameters, and dimensions
-
+        self.parameters = {}
         self.variables = {}
         self.dimensions = set()
         self.dual_variables = set()
-
+        self.locals = locals
 
     def _show_err(self, msg, lineno, lexpos):
         """ Prints a cvx4py parse error.
@@ -84,7 +84,8 @@ class cvxParser(object):
 
     def _name_exists(self,s):
         return (s in self.decl_dimensions) or \
-               (s in self.decl_variables.keys())
+               (s in self.decl_variables.keys()) or \
+               (s in self.decl_parameters.keys())
 
 
     def _check_if_defined(self, identifier, lineno, lexpos):
@@ -111,7 +112,7 @@ class cvxParser(object):
         constraints = p[2]
         if len(p) > 5: constraints.extend(p[4])  #5 because-->  program : CVX_BEGIN statements objective CVX_END
         constr = ProgramConstraints(constraints)
-        data = ProgramData(self.variables)
+        data = ProgramData(self.parameters, self.variables)
         p[0] = SOCP(p[3], constr, data)
 
 
@@ -303,6 +304,7 @@ class cvxParser(object):
         'expression : expression TIMES expression'
         p[0] = p[1] * p[3]
 
+
     def p_expression_group(self,p):
         'expression : LPAREN expression RPAREN'
         p[0] = p[2]
@@ -328,13 +330,22 @@ class cvxParser(object):
             p[0] = Number(int(p[1]))
         else:   #### check this and resolve this
             variable = self.decl_variables.get(p[1], None)
-            print self.decl_variables
 
             if not variable:
-                msg = "Unknown identifier '%s'" % p[1]
-                self._show_err(msg, p.lineno(1), p.lexpos(1))
-                raise ParseError(msg)
-
+                temp = self.decl_parameters.get(p[1], None)  #if its not a variable check if its a parameter
+                if (not temp):  #if parameter is new, then add it to param list if locals contains it
+                    value = self.locals.get(p[1], None)
+                    if (value is not None):
+                        param = Parameter(p[1], Shape(list(value.shape)), Neither())
+                        self.decl_parameters[p[1]] = param
+                        p[0] = param
+                    else:   #locals does not contain it, so undeclared parameter. throw error
+                        msg = "Unknown identifier '%s'" % p[1]
+                        self._show_err(msg, p.lineno(1), p.lexpos(1))
+                        raise ParseError(msg)
+                else:  #parameter is old. return its vlaue
+                    p[0] = temp
+                    self.parameters[p[1]] = temp
             elif variable :
                 p[0] = variable
                 self.variables[p[1]] = variable

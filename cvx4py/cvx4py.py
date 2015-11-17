@@ -6,7 +6,7 @@ from . ast.expressions import Variable
 from . ast import NodeVisitor
 import sys
 class cvx4py(object):
-    def __init__(self, cvxProgram, readFromFile, locals):
+    def __init__(self, cvxProgram, readFromFile, locals = {}):
         if readFromFile == 0:
             self.cvxProgramString = cvxProgram
         else:
@@ -23,7 +23,7 @@ class cvx4py(object):
         print "solving..."
         print self.cvxProgramString
 
-        self.parserObj = cvxParser()  #create a parser class and hen call the aprse function on it.
+        self.parserObj = cvxParser(self.locals)  #create a parser class and hen call the aprse function on it.
         self.program = self.parserObj.parse(self.cvxProgramString)
         print self.program
 

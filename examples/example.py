@@ -21,17 +21,30 @@ minimize d
 cvx_end
 """
 
-#this also works:
+
+#this work
+'''
+tests the keywords variable and variables
+tests dual variable keywords
+allows qq(2) (multi dimension variable)
+allows parameters (a)
+chained constraints and dual constraints
+separation of statements by ; and ,
+inequalities involving
+'''
 string = """
 cvx_begin
 variable d
-variable pp(1)
+variables pp(1) qq(2)
 dual variable dd
-minimize d + pp
+minimize d + (pp) + a*qq
+4 >= d >= 1
 dd: d >= 0
-pp >= 0 ; pp >= 1
+pp >= 0 ; (pp >= 1)
 pp >= 2, pp >= 3
 pp >= 4
+a*qq >= 0
+qq>=0
 cvx_end
 """
 
@@ -39,10 +52,8 @@ cvx_end
 #to do: test more and find out what doesnt work and fix it
 
 
-
-
-
 A = np.array([[ 1., 2.], [ 0., 0.], [ 1., 3.]])
+a = np.array([[1, 2]])
 prob = cvx4py(string, 0, locals())
 prob.solve();
 
