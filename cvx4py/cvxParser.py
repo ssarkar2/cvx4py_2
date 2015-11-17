@@ -150,6 +150,7 @@ class cvxParser(object):
     def p_statement(self,p):
         '''statement : create
                      | constraint
+                     | chained_constraint
                      | dual_constraint
                      | empty
         '''
@@ -241,19 +242,23 @@ class cvxParser(object):
         '''constraint : expression LOGICALEQUAL expression
                       | expression LESSTHANEQUAL expression
                       | expression GREATERTHANEQUAL expression
-                      | expression LESSTHAN expression
-                      | expression GREATERTHAN expression
         '''
         if p[2] == '==':
             p[0] = [p[1] == p[3]]
-        elif p[2] == '<=':
+        elif p[2] == '<=' or p[2] == '<':
             p[0] = [p[1] <= p[3]]
-        elif p[2] == '>=':
+        else: # p[2] == '>=' or p[2] == '>':
             p[0] = [p[1] >= p[3]]
-        elif p[2] == '<':
-            p[0] = [p[1] < p[3]]
+
+
+    def p_chained_constraint(self,p):
+        '''chained_constraint : expression LESSTHANEQUAL expression LESSTHANEQUAL expression
+                              | expression GREATERTHANEQUAL expression GREATERTHANEQUAL expression
+        '''
+        if p[2] == '<=' or p[2] == '<':
+            p[0] = [ p[1] <= p[3], p[3] <= p[5] ]
         else:
-            p[0] = [p[1] > p[3]]
+            p[0] = [ p[1] >= p[3], p[3] >= p[5] ]
 
     def p_constraint_parens(self,p):
         ' constraint : LPAREN constraint RPAREN '

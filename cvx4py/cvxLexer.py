@@ -25,7 +25,7 @@ class cvxLexer(object):
         'ID',
 
         #logical
-        'LOGICALEQUAL', 'LESSTHAN', 'GREATERTHAN', 'LESSTHANEQUAL', 'GREATERTHANEQUAL',
+        'LOGICALEQUAL', 'LESSTHANEQUAL', 'GREATERTHANEQUAL',
     ]
 
     #edit this to add new keywords. Maybe keep it in a separate file so that later adding to it is more modular
@@ -48,7 +48,7 @@ class cvxLexer(object):
     t_EQUAL  = r'\='
     #t_COMMENT = r'\$'
     #logical operators
-    t_LOGICALEQUAL  = r'\==';  t_LESSTHAN = r'\<';  t_GREATERTHAN = r'\>';  t_LESSTHANEQUAL = r'\<=';  t_GREATERTHANEQUAL = r'\>='
+    t_LOGICALEQUAL  = r'\==';    t_LESSTHANEQUAL = r'\<=?';  t_GREATERTHANEQUAL = r'\>=?'  #cvx treats < and <= as same thing. same with > and >=
 
     def t_COMMENT(self, t):  #ignore anything after this, till newline  #http://blog.ostermiller.org/find-comment
         r'\%.*'

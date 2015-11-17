@@ -9,7 +9,7 @@ string = """
 cvx_begin
 variable d
 minimize d
-d >= 0
+5 >= d >= 0
 cvx_end
 """
 
