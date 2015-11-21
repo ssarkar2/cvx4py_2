@@ -50,6 +50,8 @@ class cvxParser(object):
         self.dual_variables = set()
         self.locals = locals
 
+        self.mode = 0  #normal mode. GP mode is 1
+
     def _show_err(self, msg, lineno, lexpos):
         """ Prints a cvx4py parse error.
             lineno:
@@ -117,12 +119,28 @@ class cvxParser(object):
 
 
 
-    def p_cvxbegin(self, p):   #TO DO: may need to expand this function to include GP mode
-        '''cvxbegin : CVX_BEGIN NL'''
+
+
+    def p_cvxbegin(self, p):
+        '''cvxbegin : CVX_BEGIN
+                    | cvxbegin SEMICOLON
+                    | cvxbegin COMMA
+                    | cvxbegin NL
+        '''
         pass
 
+    def p_cvxbegin_gpmode(self, p): #TO DO: may need to expand this function to include GP mode
+        '''cvxbegin : CVX_BEGIN GP
+        '''
+        self.mode = 1 #GP mode
+        print 'in gp mode'
+
+
     def p_cvxend(self,p):
-        '''cvxend : CVX_END NL'''
+        '''cvxend : CVX_END
+                  | cvxend NL
+                  | cvxend SEMICOLON
+                  | cvxend COMMA'''
         pass
 
     def p_program_empty(self,p):
@@ -248,7 +266,6 @@ class cvxParser(object):
                       | expression LESSTHANEQUAL expression
                       | expression GREATERTHANEQUAL expression
         '''
-        print 'constraint'
         if p[2] == '==':
             p[0] = [p[1] == p[3]]
         elif p[2] == '<=' or p[2] == '<':

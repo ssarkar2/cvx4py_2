@@ -32,10 +32,14 @@ chained constraints and dual constraints
 separation of statements by ; and ,
 inequalities involving multivalues vars (q >= 0)
 ineqs with parameters (a*qq >= 0)
+identify gp mode
+'''
+#doesnt work
+'''
+x >= 0 : l  (this kind of dual variable pairings)
 '''
 string = """
-cvx_begin
-variable d
+cvx_begin gp, variable d
 variables pp(1) qq(2)
 dual variable dd
 dual variables xx yy

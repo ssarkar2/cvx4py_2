@@ -31,7 +31,8 @@ class cvxLexer(object):
     #edit this to add new keywords. Maybe keep it in a separate file so that later adding to it is more modular
     reserved = {
         #basic keywords
-        'cvx_begin' : 'CVX_BEGIN', 'cvx_end' : 'CVX_END', 'variable' : 'VARIABLE', 'variables' : 'VARIABLES', 'dual' : 'DUAL', 'minimize' : 'SENSE', 'maximize' : 'SENSE', 'subject' : 'SUBJECT', 'to' : 'TO',
+        'cvx_begin' : 'CVX_BEGIN', 'cvx_end' : 'CVX_END', 'variable' : 'VARIABLE', 'variables' : 'VARIABLES', 'dual' : 'DUAL',
+         'minimize' : 'SENSE', 'maximize' : 'SENSE', 'subject' : 'SUBJECT', 'to' : 'TO', 'gp' : 'GP',
         #non linear functions
         'abs' : 'ABS', 'exp': 'EXP', 'log' : 'LOG', 'max' : 'MAX', 'min' : 'MIN', 'norm' : 'NORM', 'polyval' : 'POLYVAL', 'power' : 'POWER', 'std' : 'STD', 'sqrt' : 'SQRT', 'var' : 'VAR',
         #fill more
