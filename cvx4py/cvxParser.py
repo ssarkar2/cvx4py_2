@@ -52,7 +52,7 @@ class cvxParser(object):
         self.locals = locals
 
         self.mode = 0  #normal mode. GP mode is 1
-        self.operations = {'sum' : Sum}
+        self.functions = {'sum' : Sum}
 
     def _show_err(self, msg, lineno, lexpos):
         """ Prints a cvx4py parse error.
@@ -307,12 +307,23 @@ class cvxParser(object):
                 p[1][0].dual_var = p[3]
             p[0] = p[1]
 
+    def p_expression_atom(self,p):
+        'expression : ATOM LPAREN arglist RPAREN'
+        print atoms
+        p[0] = atoms[p[1]](*p[3])
+
+    def p_arglist(self, p):
+        'arglist : arglist COMMA expression'
+        p[0] = p[1] + [p[3]]
+
+    def p_arglist_expr(self, p):
+        'arglist : expression'
+        p[0] = [p[1]]
 
     def p_expression_function(self,p):  #need to fill this out
         'expression : FUNCTION LPAREN expression RPAREN'
         print p[3]
-        print isinstance(p[3], basestring)
-        op = self.operations[p[1]]
+        op = self.functions[p[1]]
         p[0] = op(p[3])
 
 

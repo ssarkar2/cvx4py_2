@@ -58,14 +58,16 @@ qq>=0, exp(d+d) > exp(4)
 cvx_end
 """
 
+
 string = """
-cvx_begin, variable d()
-minimize sum(d)
+cvx_begin, variable d(2)
+minimize sum(d) + max(d) + pos(norm2(d))
 %exp(d+d) > exp(4)
 -a*d > 7
 sum(d) <= 4
 cvx_end
 """
+
 
 '''
 string = """

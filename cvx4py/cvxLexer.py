@@ -4,6 +4,7 @@
 import ply.lex as lex
 global reserved
 global tokens
+from . ast.atoms import atoms
 
 class cvxLexer(object):
     def __init__(self):
@@ -36,8 +37,9 @@ class cvxLexer(object):
         #non linear functions
         #'abs' : 'ABS', 'exp': 'EXP', 'log' : 'LOG', 'max' : 'MAX', 'min' : 'MIN', 'norm' : 'NORM', 'polyval' : 'POLYVAL', 'power' : 'POWER', 'std' : 'STD', 'sqrt' : 'SQRT', 'var' : 'VAR',
         'sum' : 'FUNCTION',
-        'abs' : 'FUNCTION', 'exp': 'FUNCTION', 'log' : 'FUNCTION', 'max' : 'FUNCTION', 'min' : 'FUNCTION', 'norm' : 'FUNCTION', 'polyval' : 'FUNCTION',
-        'power' : 'FUNCTION', 'std' : 'FUNCTION', 'sqrt' : 'FUNCTION', 'var' : 'FUNCTION',
+
+        #atoms already present in qcml
+        'norm2' : 'ATOM', 'max' : 'ATOM', 'pos' : 'ATOM'
         #fill more
         #http://cvxr.com/cvx/doc/funcref.html
     }
