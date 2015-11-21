@@ -39,6 +39,7 @@ class cvxLexer(object):
         'sum' : 'FUNCTION',
 
         #atoms already present in qcml
+        # add more atoms
         'norm2' : 'ATOM', 'max' : 'ATOM', 'pos' : 'ATOM'
         #fill more
         #http://cvxr.com/cvx/doc/funcref.html
