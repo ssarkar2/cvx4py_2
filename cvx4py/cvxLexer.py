@@ -34,7 +34,10 @@ class cvxLexer(object):
         'cvx_begin' : 'CVX_BEGIN', 'cvx_end' : 'CVX_END', 'variable' : 'VARIABLE', 'variables' : 'VARIABLES', 'dual' : 'DUAL',
          'minimize' : 'SENSE', 'maximize' : 'SENSE', 'subject' : 'SUBJECT', 'to' : 'TO', 'gp' : 'GP',
         #non linear functions
-        'abs' : 'ABS', 'exp': 'EXP', 'log' : 'LOG', 'max' : 'MAX', 'min' : 'MIN', 'norm' : 'NORM', 'polyval' : 'POLYVAL', 'power' : 'POWER', 'std' : 'STD', 'sqrt' : 'SQRT', 'var' : 'VAR',
+        #'abs' : 'ABS', 'exp': 'EXP', 'log' : 'LOG', 'max' : 'MAX', 'min' : 'MIN', 'norm' : 'NORM', 'polyval' : 'POLYVAL', 'power' : 'POWER', 'std' : 'STD', 'sqrt' : 'SQRT', 'var' : 'VAR',
+        'sum' : 'FUNCTION',
+        'abs' : 'FUNCTION', 'exp': 'FUNCTION', 'log' : 'FUNCTION', 'max' : 'FUNCTION', 'min' : 'FUNCTION', 'norm' : 'FUNCTION', 'polyval' : 'FUNCTION',
+        'power' : 'FUNCTION', 'std' : 'FUNCTION', 'sqrt' : 'FUNCTION', 'var' : 'FUNCTION',
         #fill more
         #http://cvxr.com/cvx/doc/funcref.html
     }
@@ -76,6 +79,7 @@ class cvxLexer(object):
     def t_ID(self, t):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
         t.type = self.reserved.get(t.value,'ID')    # Check for reserved words
+        print t.type
         return t
 
     # A string containing ignored characters (spaces and tabs)

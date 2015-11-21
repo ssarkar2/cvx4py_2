@@ -33,7 +33,7 @@ def _signed_multiply(left, right):
     What follows are nodes that are used to form expressions.
 """
 class Add(e.Expression, e.BinaryOperatorMixin):
-    OP_NAME = ' + '
+    OP_NAME = ' ++ '
     OP_FUNC = operator.__add__
     IDENTITY = 0
     ZERO = False
@@ -46,6 +46,7 @@ class Add(e.Expression, e.BinaryOperatorMixin):
             'sign': left.sign + right.sign,
             'shape': left.shape + right.shape
         }
+        print 'in Add xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
         super(Add, self).__init__(**setup)
 
     def _associate(self):
@@ -86,7 +87,7 @@ class Mul(e.Expression, e.BinaryOperatorMixin):
             'sign': left.sign * right.sign,
             'shape': left.shape * right.shape
         }
-
+        print 'in init Mul yyyyyyyyyy'
         super(Mul, self).__init__(**setup)
 
     def distribute(self):

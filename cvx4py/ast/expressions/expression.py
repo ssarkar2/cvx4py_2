@@ -74,6 +74,7 @@ class BinaryOperatorMixin(Node):
         self.left = left
         self.right = right
         super(BinaryOperatorMixin, self).__init__(**kwargs)
+        print 'in BinaryOperatorMixin consructor'
 
     def children(self):
         if self.left is not None: yield self.left
@@ -113,6 +114,7 @@ class BinaryOperatorMixin(Node):
         return self
 
     def simplify(self):
+        print 'BinaryOperatorMixin simplify()'
         self.left = self.left.simplify()
         self.right = self.right.simplify()
 
@@ -128,12 +130,14 @@ class BinaryOperatorMixin(Node):
         lh_obj, lh_constraints = self.left.canonicalize()
         rh_obj, rh_constraints = self.right.canonicalize()
         obj = self.OP_FUNC(lh_obj, rh_obj)
+        print 'BinaryOperatorMixin canonicalize()'
         return (obj, lh_constraints + rh_constraints)
 
 class UnaryOperatorMixin(Node):
     def __init__(self, expr, **kwargs):
         self.expr = expr
         super(UnaryOperatorMixin, self).__init__(**kwargs)
+        print 'init UnaryOperatorMixin xxxxxxxxxxxxxxxxxxxxxxxxxxx'
 
     def children(self):
         if self.expr is not None: yield self.expr

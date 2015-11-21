@@ -36,10 +36,14 @@ identify gp mode
 '''
 #doesnt work
 '''
-x >= 0 : l  (this kind of dual variable pairings)
+1) x >= 0 : l  (this kind of dual variable pairings)
+2) ... for continuing same statement to multiple lines
+for example:
+     c(1) ... this is a comment
+       ==    1;
 '''
 string = """
-cvx_begin gp, variable d
+cvx_begin, variable d
 variables pp(1) qq(2)
 dual variable dd
 dual variables xx yy
@@ -50,10 +54,36 @@ pp >= 0 ; (pp >= 1)
 pp >= 2, pp >= 3 %:yy
 pp >= 4 %: xx
 a*qq >= 0
-qq>=0,
+qq>=0, exp(d+d) > exp(4)
 cvx_end
 """
 
+string = """
+cvx_begin, variable d()
+minimize sum(d)
+%exp(d+d) > exp(4)
+-a*d > 7
+sum(d) <= 4
+cvx_end
+"""
+
+'''
+string = """
+cvx_begin gp
+    variables w h d
+    maximize(w) %w * h * d
+    %subject to
+     %   2*(h*w+h*d) <= Awall;
+      %  w*d <= Afloor;
+       % alpha <= h/w >= beta;
+        %gamma <= d/w <= delta;
+cvx_end
+"""
+'''
+
+Awall = 4
+Afloor = 2
+alpha = 0.5; beta = 2; gamma = 0.5; delta = 2; #https://github.com/cvxr/CVX/blob/master/examples/gp_tutorial/max_volume_box.m
 
 #to do: test more and find out what doesnt work and fix it
 

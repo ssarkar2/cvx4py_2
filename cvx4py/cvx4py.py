@@ -27,8 +27,8 @@ class cvx4py(object):
         self.program = self.parserObj.parse(self.cvxProgramString)
         print self.program
 
-        self.program.canonicalize()
-        print self.program
+        #self.program.canonicalize()
+        #print self.program
 
 
 

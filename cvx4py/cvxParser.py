@@ -6,6 +6,7 @@ from . ast.atoms import atoms
 from . ast import SOCP, ProgramData, ProgramConstraints, ProgramObjective
 from . properties.sign import Neither, Positive, Negative
 from . properties.shape import Scalar, Shape, isscalar
+import numpy as np
 #import ast
 #http://www.google.com/url?q=http%3A%2F%2Fcvxr.com%2Fcvx%2Fdoc%2Ffuncref.html&sa=D&sntz=1&usg=AFQjCNEskkaqwhUSwDLxA59azIaw2jSIyQ
 
@@ -51,6 +52,7 @@ class cvxParser(object):
         self.locals = locals
 
         self.mode = 0  #normal mode. GP mode is 1
+        self.operations = {'sum' : Sum}
 
     def _show_err(self, msg, lineno, lexpos):
         """ Prints a cvx4py parse error.
@@ -306,10 +308,20 @@ class cvxParser(object):
             p[0] = p[1]
 
 
+    def p_expression_function(self,p):  #need to fill this out
+        'expression : FUNCTION LPAREN expression RPAREN'
+        print p[3]
+        print isinstance(p[3], basestring)
+        op = self.operations[p[1]]
+        p[0] = op(p[3])
+
+
 
     def p_expression_add(self,p):
         'expression : expression PLUS expression'
         p[0] = p[1] + p[3] # expression + epxression
+        print 'in add'
+        #print p[3].lower()
 
 
     def p_expression_minus(self,p):
@@ -355,7 +367,9 @@ class cvxParser(object):
         elif isinstance(p[1], int):
             p[0] = Number(int(p[1]))
         else:   #### check this and resolve this
-            variable = self.decl_variables.get(p[1], None)
+            variable = self.decl_variables.get(p[1], None)  #p[1] is a string
+            print p[1].lower()
+            print isinstance(p[1], basestring)
 
             if not variable:
                 temp = self.decl_parameters.get(p[1], None)  #if its not a variable check if its a parameter
@@ -373,8 +387,11 @@ class cvxParser(object):
                     p[0] = temp
                     self.parameters[p[1]] = temp
             elif variable :
-                p[0] = variable
-                self.variables[p[1]] = variable
+                if self.mode == 0:
+                    p[0] = variable
+                    self.variables[p[1]] = variable
+                else:
+                    pass #GP mode?
 
 
     def p_error(self, t):
