@@ -38,14 +38,15 @@ cvx_begin
 variable d
 variables pp(1) qq(2)
 dual variable dd
+dual variables xx yy
 minimize d + (pp) + a*qq
 4 >= d >= 1
 dd: d >= 0
 pp >= 0 ; (pp >= 1)
-pp >= 2, pp >= 3
-pp >= 4
+pp >= 2, pp >= 3 %:yy
+pp >= 4 %: xx
 a*qq >= 0
-qq>=0
+qq>=0,
 cvx_end
 """
 

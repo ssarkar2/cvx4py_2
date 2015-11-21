@@ -138,7 +138,6 @@ class cvxParser(object):
         '''statements : statement NL
                       | statement SEMICOLON
                       | statement COMMA
-                      | statement SEMICOLON NL
         '''
         p[0] = p[1]
 
@@ -249,6 +248,7 @@ class cvxParser(object):
                       | expression LESSTHANEQUAL expression
                       | expression GREATERTHANEQUAL expression
         '''
+        print 'constraint'
         if p[2] == '==':
             p[0] = [p[1] == p[3]]
         elif p[2] == '<=' or p[2] == '<':
@@ -278,6 +278,15 @@ class cvxParser(object):
             # a constraint is a singleton list
             p[3][0].dual_var = p[1]
         p[0] = p[3]
+
+        def p_dual_constraint2(self,p):
+            'dual_constraint : constraint COLON ID NL'
+            print 'here dc2'
+            if p[3] in self.decl_dual_variables:
+                self.dual_variables.add(p[3])
+                # a constraint is a singleton list
+                p[1][0].dual_var = p[3]
+            p[0] = p[1]
 
 
 
