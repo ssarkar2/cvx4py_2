@@ -111,7 +111,7 @@ class cvxParser(object):
         constraints = p[2]
         if len(p) > 5: constraints.extend(p[4])  #5 because-->  program : CVX_BEGIN statements objective CVX_END
         constr = ProgramConstraints(constraints)
-        data = ProgramData(self.parameters, self.variables)
+        data = ProgramData(self.dimensions, self.parameters, self.variables)
         p[0] = SOCP(p[3], constr, data)
 
 
@@ -148,6 +148,13 @@ class cvxParser(object):
         'empty : '
         pass
 
+
+    '''
+    def p_create_dimension(self,p):  #dummy function
+        'create : DIMENSION ID'
+        self._check_if_defined(p[2], p.lineno(2), p.lexpos(2))
+        self.decl_dimensions.add(p[2])
+    '''
 
     def p_statements_statement(self,p):
         '''statements : statement NL

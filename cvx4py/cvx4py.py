@@ -17,6 +17,7 @@ class cvx4py(object):
         self.cvxProgramString = self.cvxProgramString.strip().split('\n')
         self.cvxProgramString = '\n'.join(line.strip() for line in self.cvxProgramString)
         self.cvxProgramString += '\n'
+        print self.cvxProgramString
         self.locals = locals
 
 
@@ -33,9 +34,9 @@ class cvx4py(object):
         self.program.canonicalize()
         print self.program
 
-        #self.__codegen = PythonCodegen()
-        #self.__codegen.visit(self.program)
-        #self.__codegen.codegen()  # generate the prob2socp and socp2prob functions
+        self.__codegen = PythonCodegen()
+        self.__codegen.visit(self.program)
+        self.__codegen.codegen()  # generate the prob2socp and socp2prob functions
 
 
 
