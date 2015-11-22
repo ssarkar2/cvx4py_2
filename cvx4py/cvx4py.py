@@ -5,6 +5,7 @@ from . ast.expressions import Variable
 from . ast import NodeVisitor
 from . codegens import Codegen
 from . codegens.python import PythonCodegen
+import ecos
 import sys
 class cvx4py(object):
     def __init__(self, cvxProgram, readFromFile, locals = {}):
@@ -20,11 +21,73 @@ class cvx4py(object):
         print self.cvxProgramString
         self.locals = locals
 
+    def prob2socp(self):
+        return self.__codegen.prob2socp
 
-    def solve(self):
+    def socp2prob(self):
+        return self.__codegen.socp2prob
+
+    def parse(self):
+        print 'Parsing...'
+        self.parserObj = cvxParser(self.locals)  #create a parser class and then call the parse function on it.
+        self.program = self.parserObj.parse(self.cvxProgramString)
+        print self.program
+
+
+    def canonicalize(self):
+        print 'Canonicalizing...'
+        self.program.canonicalize()
+        print self.program
+
+    def solver(self, params, dims):
+        temp = self.prob2socp()
+        data = temp(params, dims)
+        sol = ecos.solve(**data)
+        temp1 = self.socp2prob()
+        result = temp1(sol['x'], sol['y'], sol['z'], dims)
+        result['info'] = sol['info']
+
+        # set the objective value
+        multiplier = self.__codegen.objective_multiplier
+        offset = self.__codegen.objective_offset
+        if isinstance(offset, str):
+            # in this case, offset is likely python *code*
+            offset = eval(offset)
+        result['objval'] = multiplier * sol['info']['pcost'] + offset
+        return result
+
+
+    def solve(self, params, local_dims = None):
+        self.canonicalize()
+        self.codegen()
+        return self.solver(params, local_dims)
+
+    def codegen(self):
+        self.__codegen = PythonCodegen()
+        self.__codegen.visit(self.program)
+        self.__codegen.codegen()  # generate the prob2socp and socp2prob functions
+
+    def save(self, name = "problem"):
+        self.__codegen.save(name)
+
+
+    def solveProblem(self):
         print "Starting..."
         print self.cvxProgramString
 
+        self.parse()
+        res = self.solve(self.locals)
+        #self.canonicalize()
+
+
+        #self.canonicalize()
+
+
+        self.codegen()
+        #print self.prob2socp.source
+        self.save("problemPython")
+
+        '''
         print 'Parsing...'
         self.parserObj = cvxParser(self.locals)  #create a parser class and then call the parse function on it.
         self.program = self.parserObj.parse(self.cvxProgramString)
@@ -37,6 +100,9 @@ class cvx4py(object):
         self.__codegen = PythonCodegen()
         self.__codegen.visit(self.program)
         self.__codegen.codegen()  # generate the prob2socp and socp2prob functions
+        '''
+
+
 
 
 

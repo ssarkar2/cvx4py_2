@@ -109,7 +109,7 @@ alpha = 0.5; beta = 2; gamma = 0.5; delta = 2; #https://github.com/cvxr/CVX/blob
 A = np.array([[ 1., 2.], [ 0., 0.], [ 1., 3.]])
 a = np.array([[1, 2]])
 prob = cvx4py(string, 0, locals())
-prob.solve();
+prob.solveProblem();
 
 
 #prob = cvx4py('myfile.cvx', 1, locals())
