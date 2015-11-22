@@ -69,9 +69,10 @@ sum(d) <= 4
 cvx_end
 """
 
-
+zz=2
 string = """
-cvx_begin, variable d(2)
+cvx_begin,
+variable d(zz)
 variables c b
 dual variable dd
 minimize  abs(sum(d)) + max(d) + sum(abs(d))

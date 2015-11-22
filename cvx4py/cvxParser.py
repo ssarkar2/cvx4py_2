@@ -81,11 +81,6 @@ class cvxParser(object):
         return self.parserObj.parse(cvxProgramString)  #uncomment once parser is implemented
 
 
-    #implement a bunch of functions required for parser here
-    #def p_program(self, p)  #https://github.com/cvxgrp/qcml/blob/master/src/qc_parser.py
-        #pass
-
-
     def _name_exists(self,s):
         return (s in self.decl_dimensions) or \
                (s in self.decl_variables.keys()) or \
@@ -247,8 +242,9 @@ class cvxParser(object):
         '''dimlist : INT
                    | ID
         '''
-        self._check_dimension(p[1], p.lineno(1), p.lexpos(1))
-        p[0] = [p[1]]
+        temp = self.locals.get(p[1], p[1])
+        self._check_dimension(temp, p.lineno(1), p.lexpos(1))
+        p[0] = [temp]
 
     # (for declaring multiple dimensions) id id id ...
     def p_idlist_list(self,p):
@@ -364,6 +360,7 @@ class cvxParser(object):
         if isscalar(p[1]): p[0] = p[1]
         else: p[0] = Transpose(p[1])
 
+
     def p_expression_constant(self,p):
         '''expression : FLOAT
                       | INT
@@ -384,6 +381,7 @@ class cvxParser(object):
                         param = Parameter(p[1], Shape(list(value.shape)), Neither())
                         self.decl_parameters[p[1]] = param
                         p[0] = param
+                        #print 'ERROR'
                     else:   #locals does not contain it, so undeclared parameter. throw error
                         msg = "Unknown identifier '%s'" % p[1]
                         self._show_err(msg, p.lineno(1), p.lexpos(1))
