@@ -1,9 +1,10 @@
 from . cvxParser import cvxParser
-
 from . helpers import profile, default_locals
 from . exceptions import DCPError, QCMLException
 from . ast.expressions import Variable
 from . ast import NodeVisitor
+from . codegens import Codegen
+from . codegens.python import PythonCodegen
 import sys
 class cvx4py(object):
     def __init__(self, cvxProgram, readFromFile, locals = {}):
@@ -31,6 +32,12 @@ class cvx4py(object):
         print 'Canonicalizing...'
         self.program.canonicalize()
         print self.program
+
+        #self.__codegen = PythonCodegen()
+        #self.__codegen.visit(self.program)
+        #self.__codegen.codegen()  # generate the prob2socp and socp2prob functions
+
+
 
 
 

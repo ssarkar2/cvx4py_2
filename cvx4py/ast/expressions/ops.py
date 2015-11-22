@@ -33,7 +33,7 @@ def _signed_multiply(left, right):
     What follows are nodes that are used to form expressions.
 """
 class Add(e.Expression, e.BinaryOperatorMixin):
-    OP_NAME = ' ++ '
+    OP_NAME = ' + '
     OP_FUNC = operator.__add__
     IDENTITY = 0
     ZERO = False

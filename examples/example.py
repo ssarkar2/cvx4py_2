@@ -73,9 +73,11 @@ cvx_end
 string = """
 cvx_begin, variable d(2)
 variables c b
-minimize  abs(sum(d)) + max(d)
+dual variable dd
+minimize  abs(sum(d)) + max(d) + sum(abs(d))
+%d <= 0
 %exp(d+d) > exp(4)
--a*d > 7
+a*d >= 7 %: dd
 abs(d) <= 4
 cvx_end
 """

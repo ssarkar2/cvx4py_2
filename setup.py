@@ -21,7 +21,13 @@ config = {
                 'cvx4py.ast.constraints',
                 'cvx4py.ast.expressions',
                 'cvx4py.ast.socps',
-                'cvx4py.properties'],
+                'cvx4py.properties',
+                'cvx4py.codegens',
+                'cvx4py.codegens.python',
+                'cvx4py.codes',
+                'cvx4py.codes.encoders',
+                'cvx4py.codes.coefficients',
+                'cvx4py.mixins'],
 }
 
 

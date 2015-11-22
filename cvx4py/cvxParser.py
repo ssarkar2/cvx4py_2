@@ -298,8 +298,9 @@ class cvxParser(object):
             p[3][0].dual_var = p[1]
         p[0] = p[3]
 
-        def p_dual_constraint2(self,p):
-            'dual_constraint : constraint COLON ID NL'
+        def p_dual_constraint_type2(self,p):  #to do todo: not working
+            'dual_constraint : constraint COLON ID'
+            print 'p_dual_constraint_2'
             if p[3] in self.decl_dual_variables:
                 self.dual_variables.add(p[3])
                 # a constraint is a singleton list
