@@ -40,7 +40,7 @@ class cvxLexer(object):
 
         #atoms already present in qcml
         # add more atoms
-        'norm2' : 'ATOM', 'max' : 'ATOM', 'pos' : 'ATOM'
+        'norm2' : 'ATOM', 'max' : 'ATOM', 'abs' : 'ATOM',
         #fill more
         #http://cvxr.com/cvx/doc/funcref.html
     }
@@ -82,7 +82,6 @@ class cvxLexer(object):
     def t_ID(self, t):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
         t.type = self.reserved.get(t.value,'ID')    # Check for reserved words
-        print t.type
         return t
 
     # A string containing ignored characters (spaces and tabs)

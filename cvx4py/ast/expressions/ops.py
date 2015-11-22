@@ -46,7 +46,6 @@ class Add(e.Expression, e.BinaryOperatorMixin):
             'sign': left.sign + right.sign,
             'shape': left.shape + right.shape
         }
-        print 'in Add xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
         super(Add, self).__init__(**setup)
 
     def _associate(self):
@@ -87,7 +86,6 @@ class Mul(e.Expression, e.BinaryOperatorMixin):
             'sign': left.sign * right.sign,
             'shape': left.shape * right.shape
         }
-        print 'in init Mul yyyyyyyyyy'
         super(Mul, self).__init__(**setup)
 
     def distribute(self):

@@ -61,13 +61,24 @@ cvx_end
 
 string = """
 cvx_begin, variable d(2)
-minimize sum(d) + max(d) + pos(norm2(d))
+variable c
+minimize sum(d) + max(d) + abs(norm2(d))
 %exp(d+d) > exp(4)
 -a*d > 7
 sum(d) <= 4
 cvx_end
 """
 
+
+string = """
+cvx_begin, variable d(2)
+variables c b
+minimize  abs(sum(d)) + max(d)
+%exp(d+d) > exp(4)
+-a*d > 7
+abs(d) <= 4
+cvx_end
+"""
 
 '''
 string = """

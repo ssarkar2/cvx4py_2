@@ -300,7 +300,6 @@ class cvxParser(object):
 
         def p_dual_constraint2(self,p):
             'dual_constraint : constraint COLON ID NL'
-            print 'here dc2'
             if p[3] in self.decl_dual_variables:
                 self.dual_variables.add(p[3])
                 # a constraint is a singleton list
@@ -309,7 +308,6 @@ class cvxParser(object):
 
     def p_expression_atom(self,p):
         'expression : ATOM LPAREN arglist RPAREN'
-        print atoms
         p[0] = atoms[p[1]](*p[3])
 
     def p_arglist(self, p):
@@ -322,7 +320,6 @@ class cvxParser(object):
 
     def p_expression_function(self,p):  #need to fill this out
         'expression : FUNCTION LPAREN expression RPAREN'
-        print p[3]
         op = self.functions[p[1]]
         p[0] = op(p[3])
 
@@ -331,8 +328,6 @@ class cvxParser(object):
     def p_expression_add(self,p):
         'expression : expression PLUS expression'
         p[0] = p[1] + p[3] # expression + epxression
-        print 'in add'
-        #print p[3].lower()
 
 
     def p_expression_minus(self,p):
@@ -379,8 +374,6 @@ class cvxParser(object):
             p[0] = Number(int(p[1]))
         else:   #### check this and resolve this
             variable = self.decl_variables.get(p[1], None)  #p[1] is a string
-            print p[1].lower()
-            print isinstance(p[1], basestring)
 
             if not variable:
                 temp = self.decl_parameters.get(p[1], None)  #if its not a variable check if its a parameter

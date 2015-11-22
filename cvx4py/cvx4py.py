@@ -20,13 +20,15 @@ class cvx4py(object):
 
 
     def solve(self):
-        print "solving..."
+        print "Starting..."
         print self.cvxProgramString
 
-        self.parserObj = cvxParser(self.locals)  #create a parser class and hen call the aprse function on it.
+        print 'Parsing...'
+        self.parserObj = cvxParser(self.locals)  #create a parser class and then call the parse function on it.
         self.program = self.parserObj.parse(self.cvxProgramString)
         print self.program
 
+        print 'Canonicalizing...'
         self.program.canonicalize()
         print self.program
 
