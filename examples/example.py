@@ -33,6 +33,7 @@ separation of statements by ; and ,
 inequalities involving multivalues vars (q >= 0)
 ineqs with parameters (a*qq >= 0)
 identify gp mode
+variable x(n), or variable x(n,m), where n and m are constants declared in locals()
 '''
 #doesnt work
 '''
@@ -73,7 +74,8 @@ zz=2
 string = """
 cvx_begin,
 variable d(zz)
-variables c b
+variable xxxx(zz,zz)
+variables c b(2)
 dual variable dd
 minimize  abs(sum(d)) + max(d) + sum(abs(d))
 %d <= 0

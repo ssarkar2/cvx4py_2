@@ -235,8 +235,9 @@ class cvxParser(object):
         '''dimlist : dimlist COMMA ID
                    | dimlist COMMA INT
         '''
-        self._check_dimension(p[3], p.lineno(3), p.lexpos(3))
-        p[0] = p[1] + [p[3]]
+        temp = self.locals.get(p[3], p[3])
+        self._check_dimension(temp, p.lineno(3), p.lexpos(3))
+        p[0] = p[1] + [temp]
 
     def p_dimlist_singleton(self,p):
         '''dimlist : INT
