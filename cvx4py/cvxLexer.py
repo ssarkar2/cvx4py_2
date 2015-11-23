@@ -15,7 +15,7 @@ class cvxLexer(object):
         'INT',
         'FLOAT',
         #arithmetic operators
-        'PLUS', 'MINUS', 'TIMES', 'DIVIDE',
+        'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'POWER',
         #punctuators
         'LPAREN', 'RPAREN',
         'COMMA', 'SEMICOLON', 'COLON', 'DOT', 'TRANSPOSE',
@@ -48,7 +48,7 @@ class cvxLexer(object):
     tokens = tokens + reserved.values()
 
     # Regular expression rules for simple tokens
-    t_PLUS       = r'\+'; t_MINUS      = r'-'; t_TIMES      = r'\*'; t_DIVIDE      = r'\/'
+    t_PLUS       = r'\+'; t_MINUS      = r'-'; t_TIMES      = r'\*'; t_DIVIDE      = r'\/'; t_POWER     = r'\^'
     t_LPAREN     = r'\('; t_RPAREN     = r'\)';
     t_SEMICOLON  = r'\;'; t_COLON      = r'\:'; t_DOT        = r'\.'; t_TRANSPOSE = r'\''
     t_COMMA = r'\,'

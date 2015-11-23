@@ -1,3 +1,4 @@
+from . cvxParserGP import cvxParserGP
 from . cvxParser import cvxParser
 from . helpers import profile, default_locals
 from . exceptions import DCPError, QCMLException
@@ -70,38 +71,27 @@ class cvx4py(object):
     def save(self, name = "problem"):
         self.__codegen.save(name)
 
+    def isGPMode(self):
+        return 'gp' in self.cvxProgramString.strip().split('\n')[0]
+
+    def gpparse(self):
+        print 'Parsing GP...'
+        self.parserObjGP = cvxParserGP(self.locals)  #create a parser class and then call the parse function on it.
+        #self.program = self.parserObj.parse(self.cvxProgramString)
+        #print self.program
 
     def solveProblem(self):
         print "Starting..."
         print self.cvxProgramString
 
-        self.parse()
-        res = self.solve(self.locals)
-        #self.canonicalize()
-
-
-        #self.canonicalize()
-
-
-        self.codegen()
-        #print self.prob2socp.source
-        self.save("problemPython")
-
-        '''
-        print 'Parsing...'
-        self.parserObj = cvxParser(self.locals)  #create a parser class and then call the parse function on it.
-        self.program = self.parserObj.parse(self.cvxProgramString)
-        print self.program
-
-        print 'Canonicalizing...'
-        self.program.canonicalize()
-        print self.program
-
-        self.__codegen = PythonCodegen()
-        self.__codegen.visit(self.program)
-        self.__codegen.codegen()  # generate the prob2socp and socp2prob functions
-        '''
-
+        if (self.isGPMode()):
+            self.gpparse()
+            pass
+        else:
+            self.parse()
+            res = self.solve(self.locals)
+            self.codegen()
+            self.save("problemPython")
 
 
 
