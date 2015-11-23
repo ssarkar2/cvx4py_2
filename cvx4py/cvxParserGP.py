@@ -9,6 +9,10 @@ from ply import yacc
 import numpy as np
 
 
+#var is a list of 2 elements: [varname(string), dimension/idx(int)]  #note, if var is encountered in objective, the int is its dimension, else if its in a constraint, its the index
+#varlist is a list of vars
+
+
 #http://cvxr.com/cvx/doc/gp.html
 class cvxParserGP(object):
     # operator precedence
@@ -24,6 +28,7 @@ class cvxParserGP(object):
         self.tokens = self.lexerObj.tokens
         self.parserObj = yacc.yacc(module = self)
         self.locals = locals
+        self.decl_vars = {}
 
     def parse(self, cvxProgramString):
         return self.parserObj.parse(cvxProgramString)
@@ -33,7 +38,7 @@ class cvxParserGP(object):
                    |  cvxbegin statements objective cvxend
         '''
 
-        print 'p_program_gp'
+        #print 'p_program_gp'
         #constraints = p[3]
         #if len(p) > 6: constraints.extend(p[5])
         #constr =  ProgramConstraintsGP(constraints)
@@ -74,16 +79,21 @@ class cvxParserGP(object):
 
 
     def p_create_identifier(self,p):
-        'create : VARIABLE array'
+        'create : VARIABLE var'
         #(name, shape) = p[2]
         #if(p[1] == 'variable'):
             #self.decl_variables[name] = Variable(name, shape)
+        self.addVar(p[2])
+        print p[2][0] + ' = Variable(' + str(p[2][1]) + ')'
         pass
 
     def p_create_identifiers(self,p):
-        'create : VARIABLES arraylist'
+        'create : VARIABLES varlist'
         #if(p[1] == 'variables'):
             #self.decl_variables.update({name: Variable(name, shape) for (name,shape) in p[2]})
+        for item in p[2]:
+            self.addVar(item)
+            print item[0] + ' = Variable(' + str(item[1]) + ')'
         pass
 
     def p_create_dual_variable(self, p):
@@ -94,27 +104,35 @@ class cvxParserGP(object):
         'create : DUAL VARIABLES idlist'
         pass
 
-    def p_array_identifier(self,p):
-        'array : ID LPAREN dimlist RPAREN'
+    def addVar(self, var):
+        if self.decl_vars.get(var[0], None) is not None:
+            print 'ERROR: adding already declared variable'
+            #TODO to do: add an error-exit function
+        else:
+            self.decl_vars[var[0]] = var[1]
+
+
+    def p_var_identifier(self,p):
+        'var : ID LPAREN dimlist RPAREN'
         #self._check_if_defined(p[1], p.lineno(1), p.lexpos(1))
         #p[0] = (p[1], Shape(p[3]))
-        #p[0] = [p[1], p[3]]
+        p[0] = [p[1], p[3]]
 
-    def p_array_identifier_scalar(self, p):
-        '''array : ID
+    def p_var_identifier_scalar(self, p):
+        '''var : ID
                  | ID LPAREN RPAREN
         '''
         #self._check_if_defined(p[1], p.lineno(1), p.lexpos(1))
         #p[0] = (p[1],Scalar())
-        #p[0] = p[1]
+        p[0] = [p[1], 1]  #var
 
-    def p_arraylist_list(self,p):
-        'arraylist : arraylist array'
-        #p[0] = p[1] + [p[2]]
+    def p_varlist_list(self,p):
+        'varlist : varlist var'
+        p[0] = p[1] + [p[2]]  #append to list
 
-    def p_arraylist_array(self,p):
-        'arraylist : array'
-        #p[0] = [p[1]]
+    def p_varlist_var(self,p):
+        'varlist : var'
+        p[0] = [p[1]]
 
     """ def p_dimlist_list(self,p):
         '''dimlist : dimlist COMMA ID
@@ -127,7 +145,7 @@ class cvxParserGP(object):
                    | ID
         '''
         temp = self.locals.get(p[1], p[1])
-        #p[0] = temp
+        p[0] = temp
 
     def p_idlist_list(self,p):
         '''idlist : idlist ID'''
@@ -199,11 +217,11 @@ class cvxParserGP(object):
         pass
 
     def p_monomial_const(self, p):  #p[0] is a string (if its ID) or a number
-        '''mono : array
+        '''mono : var
                 | INT
                 | FLOAT'''
-        print p[1]
-        pass
+        #print p[1]
+        #p[0] = var
 
     def p_posynomial(self, p):
         '''posy : mono'''
