@@ -18,6 +18,8 @@ cvx_end
 
 string = """
 cvx_begin gp
+variables x y
+maximize x*y
 x  +y <= x*y
 cvx_end
 """

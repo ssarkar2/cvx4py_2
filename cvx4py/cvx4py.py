@@ -77,7 +77,7 @@ class cvx4py(object):
     def gpparse(self):
         print 'Parsing GP...'
         self.parserObjGP = cvxParserGP(self.locals)  #create a parser class and then call the parse function on it.
-        #self.program = self.parserObj.parse(self.cvxProgramString)
+        self.program = self.parserObjGP.parse(self.cvxProgramString)
         #print self.program
 
     def solveProblem(self):

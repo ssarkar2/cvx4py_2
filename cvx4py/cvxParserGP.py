@@ -23,9 +23,26 @@ class cvxParserGP(object):
         self.tokens = self.lexerObj.tokens
         self.parserObj = yacc.yacc(module = self)
 
+    def parse(self, cvxProgramString):
+        return self.parserObj.parse(cvxProgramString)
+
     def p_program(self,p):
-        '''program :  cvxbegin statements cvxend
+        '''program :  cvxbegin statements objective statements cvxend
+                   |  cvxbegin statements objective cvxend
         '''
+        pass
+
+    def p_program_empty(self,p):
+        'program : empty'
+        pass
+
+    def p_empty(self,p):
+        'empty : '
+        pass
+
+    def p_objective(self,p):
+        '''objective : SENSE posy NL
+                     | SENSE posy NL SUBJECT TO NL'''
         pass
 
     def p_cvxbegin(self, p):
@@ -50,6 +67,51 @@ class cvxParserGP(object):
                   | cvxend COMMA'''
         pass
 
+
+    def p_create_identifier(self,p):
+        'create : VARIABLE array'
+
+    def p_create_identifiers(self,p):
+        'create : VARIABLES arraylist'
+
+    def p_create_dual_variable(self, p):
+        """create : DUAL VARIABLE ID"""
+
+    def p_create_dual_variables(self, p):
+        'create : DUAL VARIABLES idlist'
+
+    def p_array_identifier(self,p):
+        'array : ID LPAREN dimlist RPAREN'
+
+    def p_array_identifier_scalar(self, p):
+        '''array : ID
+                 | ID LPAREN RPAREN
+        '''
+
+    def p_arraylist_list(self,p):
+        'arraylist : arraylist array'
+
+    def p_arraylist_array(self,p):
+        'arraylist : array'
+
+    def p_dimlist_list(self,p):
+        '''dimlist : dimlist COMMA ID
+                   | dimlist COMMA INT
+        '''
+
+    def p_dimlist_singleton(self,p):
+        '''dimlist : INT
+                   | ID
+        '''
+
+    def p_idlist_list(self,p):
+        '''idlist : idlist ID'''
+        pass
+
+    def p_idlist_id(self,p):
+        'idlist : ID'
+        pass
+
     def p_statements_statement(self,p):
         '''statements : statement NL
                       | statement SEMICOLON
@@ -65,6 +127,16 @@ class cvxParserGP(object):
 
     def p_statement(self,p):
         '''statement : constraint
+                     | create
+                     | chained_constraint
+                     | empty
+        '''
+        pass
+
+    def p_chained_constraint(self, p):
+        '''chained_constraint : posy LESSTHANEQUAL mono LESSTHANEQUAL posy
+                      | mono GREATERTHANEQUAL posy GREATERTHANEQUAL mono
+                      | mono LESSTHANEQUAL posy GREATERTHANEQUAL mono
         '''
         pass
 
@@ -74,6 +146,11 @@ class cvxParserGP(object):
                       | mono GREATERTHANEQUAL posy
         '''
         pass
+
+    '''
+    def p_chained_constraint(self,p):
+        pass
+    '''
 
 
     def p_monomial_prod(self, p):
@@ -90,7 +167,9 @@ class cvxParserGP(object):
         pass
 
     def p_monomial(self, p):
-        '''mono : ID'''
+        '''mono : ID
+                | INT
+                | FLOAT'''
         pass
 
     def p_posynomial(self, p):
@@ -113,6 +192,8 @@ class cvxParserGP(object):
         '''posy : posy POWER INT'''
         pass
 
+    def p_error(self, t):
+        print("Syntax error at '%s'" % t.value)
 
 
 
