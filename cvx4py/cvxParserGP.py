@@ -32,11 +32,12 @@ class cvxParserGP(object):
         '''
 
         print 'p_program_gp'
-        constraints = p[3]
-        if len(p) > 6: constraints.extend(p[5])
-        constr =  ProgramConstraintsGP(constraints)
-        data = ProgramDataGP(self.dimensions,self.parameters,self.variables)
-        p[0] = GP(p[4],constr,data)
+        #constraints = p[3]
+        #if len(p) > 6: constraints.extend(p[5])
+        #constr =  ProgramConstraintsGP(constraints)
+        #data = ProgramDataGP(self.dimensions,self.parameters,self.variables)
+        #p[0] = GP(p[4],constr,data)
+        pass
 
     def p_program_empty(self,p):
         'program : empty'
@@ -50,40 +51,38 @@ class cvxParserGP(object):
         '''objective : SENSE posy NL
                      | SENSE posy NL SUBJECT TO NL'''
 
-        p[0] = ProgramObjectiveGP(p[1],p[2])
+        #p[0] = ProgramObjectiveGP(p[1],p[2])
+        pass
 
     def p_cvxbegin(self, p):
-        '''cvxbegin : CVX_BEGIN GP
-                    | cvxbegin GP SEMICOLON
-                    | cvxbegin GP COMMA
-                    | cvxbegin GP NL
+        '''cvxbegin : CVX_BEGIN GP SEMICOLON
+                    | CVX_BEGIN GP COMMA
+                    | CVX_BEGIN GP NL
         '''
         self.mode = 1 #GP mode
         print 'in gp mode'
 
 
-
-
-
-
     def p_cvxend(self,p):
         '''cvxend : CVX_END
-                  | cvxend NL
-                  | cvxend SEMICOLON
-                  | cvxend COMMA'''
+                  | CVX_END NL
+                  | CVX_END SEMICOLON
+                  | CVX_END COMMA'''
         pass
 
 
     def p_create_identifier(self,p):
         'create : VARIABLE array'
-        (name, shape) = p[2]
-        if(p[1] == 'variable'):
-            self.decl_variables[name] = Variable(name, shape)
+        #(name, shape) = p[2]
+        #if(p[1] == 'variable'):
+            #self.decl_variables[name] = Variable(name, shape)
+        pass
 
     def p_create_identifiers(self,p):
         'create : VARIABLES arraylist'
-        if(p[1] == 'variables'):
-            self.decl_variables.update({name: Variable(name, shape) for (name,shape) in p[2]})
+        #if(p[1] == 'variables'):
+            #self.decl_variables.update({name: Variable(name, shape) for (name,shape) in p[2]})
+        pass
 
     def p_create_dual_variable(self, p):
         '''create : DUAL VARIABLE ID'''
@@ -95,8 +94,8 @@ class cvxParserGP(object):
 
     def p_array_identifier(self,p):
         'array : ID LPAREN dimlist RPAREN'
-        self._check_if_defined(p[1], p.lineno(1), p.lexpos(1))
-        p[0] = (p[1], Shape(p[3]))
+        #self._check_if_defined(p[1], p.lineno(1), p.lexpos(1))
+        #p[0] = (p[1], Shape(p[3]))
 
     def p_array_identifier_scalar(self, p):
         '''array : ID
@@ -107,17 +106,18 @@ class cvxParserGP(object):
 
     def p_arraylist_list(self,p):
         'arraylist : arraylist array'
-        p[0] = p[1] + [p[2]]
+        #p[0] = p[1] + [p[2]]
 
     def p_arraylist_array(self,p):
         'arraylist : array'
-        p[0] = [p[1]]
+        #p[0] = [p[1]]
 
     """ def p_dimlist_list(self,p):
         '''dimlist : dimlist COMMA ID
                    | dimlist COMMA INT
         '''
     """
+
     def p_dimlist_singleton(self,p):
         '''dimlist : INT
                    | ID
@@ -126,14 +126,14 @@ class cvxParserGP(object):
         self._check_dimension(temp, p.lineno(1), p.lexpos(1))
         p[0] = [temp]
 
-    """ def p_idlist_list(self,p):
+    def p_idlist_list(self,p):
         '''idlist : idlist ID'''
         pass
 
     def p_idlist_id(self,p):
         'idlist : ID'
         pass
-    """
+
     def p_statements_statement(self,p):
         '''statements : statement NL
                       | statement SEMICOLON
@@ -183,7 +183,8 @@ class cvxParserGP(object):
 
     def p_monomial_prod(self, p):
         '''mono : mono TIMES mono'''
-        p[0] = p[1] * p[3]
+        #p[0] = p[1] * p[3]
+        pass
 
     def p_monomial_div(self, p):
         '''mono : mono DIVIDE mono'''
@@ -199,17 +200,7 @@ class cvxParserGP(object):
                 | INT
                 | FLOAT'''
         pass
-    def p_monomial_var(self,p):
-        ''' mono : expression
-        '''
-        pass
 
-    def p_monomial_var_2(self,p):
-        ''' mono: ID times expression
-                | POSINT times expression
-                | POSFLOAT times expression
-        '''
-        pass
     def p_posynomial(self, p):
         '''posy : mono'''
         pass
