@@ -115,7 +115,15 @@ class cvxParser(object):
         p[0] = SOCP(p[3], constr, data)
 
 
-
+    def p_program_gp(self,p):
+        '''programs : cvxbegin GP statements objective statements cvxend
+                    | cvxbegin GP statements objective cvxend'''
+        print 'p_program_gp'
+        constraints = p[3]
+        if len(p) > 6: constraints.extend(p[5])
+        constr =  ProgramConstraints(constraints)
+        data = ProgramData(self.dimensions,self.parameters,self.variables)
+        p[0] = GP(p[4],constr,data)
 
 
     def p_cvxbegin(self, p):
