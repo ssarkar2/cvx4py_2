@@ -27,8 +27,8 @@ class cvxParserGP(object):
         return self.parserObj.parse(cvxProgramString)
 
     def p_program(self,p):
-        '''program :  cvxbegin GP statements objective statements cvxend
-                   |  cvxbegin GP statements objective cvxend
+        '''program :  cvxbegin statements objective statements cvxend
+                   |  cvxbegin statements objective cvxend
         '''
 
         print 'p_program_gp'
@@ -101,8 +101,8 @@ class cvxParserGP(object):
         '''array : ID
                  | ID LPAREN RPAREN
         '''
-        self._check_if_defined(p[1], p.lineno(1), p.lexpos(1))
-        p[0] = (p[1],Scalar())
+        #self._check_if_defined(p[1], p.lineno(1), p.lexpos(1))
+        #p[0] = (p[1],Scalar())
 
     def p_arraylist_list(self,p):
         'arraylist : arraylist array'
