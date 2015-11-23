@@ -27,10 +27,16 @@ class cvxParserGP(object):
         return self.parserObj.parse(cvxProgramString)
 
     def p_program(self,p):
-        '''program :  cvxbegin statements objective statements cvxend
-                   |  cvxbegin statements objective cvxend
+        '''program :  cvxbegin GP statements objective statements cvxend
+                   |  cvxbegin GP statements objective cvxend
         '''
-        pass
+
+        print 'p_program_gp'
+        constraints = p[3]
+        if len(p) > 6: constraints.extend(p[5])
+        constr =  ProgramConstraints(constraints)
+        data = ProgramData(self.dimensions,self.parameters,self.variables)
+        p[0] = GP(p[4],constr,data)
 
     def p_program_empty(self,p):
         'program : empty'
