@@ -6,7 +6,7 @@ from . ast.expressions import Variable
 from . ast import NodeVisitor
 from . codegens import Codegen
 from . codegens.python import PythonCodegen
-import ecos
+#import ecos
 import sys
 class cvx4py(object):
     def __init__(self, cvxProgram, readFromFile, locals = {}):
