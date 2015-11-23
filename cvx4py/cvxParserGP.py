@@ -15,6 +15,7 @@ class cvxParserGP(object):
     precedence = (
         ('left', 'PLUS', 'MINUS'),
         ('left', 'TIMES', 'DIVIDE'),
+        ('left', 'POWER'),
     )
 
     def __init__(self, locals = {}):
@@ -22,6 +23,7 @@ class cvxParserGP(object):
         self.lexerObj.buildLex()
         self.tokens = self.lexerObj.tokens
         self.parserObj = yacc.yacc(module = self)
+        self.locals = locals
 
     def parse(self, cvxProgramString):
         return self.parserObj.parse(cvxProgramString)
@@ -96,6 +98,7 @@ class cvxParserGP(object):
         'array : ID LPAREN dimlist RPAREN'
         #self._check_if_defined(p[1], p.lineno(1), p.lexpos(1))
         #p[0] = (p[1], Shape(p[3]))
+        #p[0] = [p[1], p[3]]
 
     def p_array_identifier_scalar(self, p):
         '''array : ID
@@ -103,6 +106,7 @@ class cvxParserGP(object):
         '''
         #self._check_if_defined(p[1], p.lineno(1), p.lexpos(1))
         #p[0] = (p[1],Scalar())
+        #p[0] = p[1]
 
     def p_arraylist_list(self,p):
         'arraylist : arraylist array'
@@ -123,8 +127,7 @@ class cvxParserGP(object):
                    | ID
         '''
         temp = self.locals.get(p[1], p[1])
-        self._check_dimension(temp, p.lineno(1), p.lexpos(1))
-        p[0] = [temp]
+        #p[0] = temp
 
     def p_idlist_list(self,p):
         '''idlist : idlist ID'''
@@ -195,10 +198,11 @@ class cvxParserGP(object):
                 | mono POWER INT'''
         pass
 
-    def p_monomial_const(self, p):
-        '''mono : ID
+    def p_monomial_const(self, p):  #p[0] is a string (if its ID) or a number
+        '''mono : array
                 | INT
                 | FLOAT'''
+        print p[1]
         pass
 
     def p_posynomial(self, p):
@@ -206,7 +210,7 @@ class cvxParserGP(object):
         pass
 
     def p_posynomial_add(self, p):
-        '''posy : mono PLUS mono'''
+        '''posy : posy PLUS posy'''
         pass
 
     def p_posynomial_prod(self, p):

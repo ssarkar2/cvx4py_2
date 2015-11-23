@@ -97,6 +97,19 @@ y >= 0
 cvx_end
 """
 
+#this doesnt work: cant handle : 2*x(1) + x(2) >= 14
+string = """
+cvx_begin
+variables x(2)
+minimize 2*x(1) + 4*x(2)
+2*x(1) + x(2) >= 14
+x(1) + x(2) >= 12
+x(1) + 3*x(2) >= 18
+x(1) >= 0
+x(2) >= 0
+cvx_end
+"""
+
 '''
 string = """
 cvx_begin gp

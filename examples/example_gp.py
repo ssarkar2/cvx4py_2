@@ -16,11 +16,12 @@ cvx_begin gp
 cvx_end
 """
 
+n=2
 string = """
 cvx_begin gp
-variables x y
-maximize x*y
-x  +y <= x*y
+variables x y(n)
+maximize x*x*x^2
+x + y(1) + y(2) <= 4
 cvx_end
 """
 
