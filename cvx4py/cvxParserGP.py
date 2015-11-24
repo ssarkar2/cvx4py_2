@@ -60,6 +60,23 @@ class cvxParserGP(object):
                      | SENSE posy NL SUBJECT TO NL'''
 
         #p[0] = ProgramObjectiveGP(p[1],p[2])
+
+        self.Objective = []
+
+        if(p[1] == 'minimize'):                             # Objective is a list ['minimize',<Posynomial/Monomial Object>]
+            self.Objective.append('minimize')
+            self.Objective.append(p[2])
+
+        elif(p[1] == 'maximize'and type(p[2])=='Monomial'): # or ['maximize',<Monomial object>]
+            self.Objective.append('maximize')
+            self.Objective.append(p[2])
+
+        elif(p[1] == 'find'):                               # or feasibility problem ['minimize',1]
+            self.Objective.append('minimize')
+            p[2] = Monomial()
+            self.Objective.append(p[2])
+
+        #print self.Objective
         pass
 
     def p_cvxbegin(self, p):
@@ -246,6 +263,17 @@ class cvxParserGP(object):
     def p_posynomial_power(self, p):
         '''posy : posy POWER INT'''
         p[0] = p[1].posy_power(int(p[3]))
+
+    #NEW RULE - may be useful?
+
+    def p_posymonial_bracket(self,p):
+        '''posy : LPAREN posy RPAREN'''
+        p[0] = p[2]
+
+    #NEW RULE - may be useful?
+    def p_monomial_bracket(self,p):
+        '''mono : LPAREN mono RPAREN'''
+        p[0] = p[2]
 
     def p_error(self, t):
         print("Syntax error at '%s'" % t.value)
