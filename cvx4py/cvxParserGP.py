@@ -31,6 +31,7 @@ class cvxParserGP(object):
         self.locals = locals
         self.decl_vars = {}
         self.VarDeclaration = []
+        self.constraints = []
 
     def parse(self, cvxProgramString):
         return self.parserObj.parse(cvxProgramString)
@@ -68,7 +69,7 @@ class cvxParserGP(object):
             self.Objective.append('minimize')
             self.Objective.append(p[2])
 
-        elif(p[1] == 'maximize'and type(p[2])=='Monomial'): # or ['maximize',<Monomial object>]
+        elif(p[1] == 'maximize'and len(p[2].posyList)==1): # or ['maximize',<Monomial object>]
             self.Objective.append('maximize')
             self.Objective.append(p[2])
 
@@ -77,7 +78,9 @@ class cvxParserGP(object):
             p[2] = Monomial()
             self.Objective.append(p[2])
 
-        #print self.Objective
+        print self.Objective[0]
+        for i in self.Objective[1].posyList:
+            print i.monoDict
         pass
 
     def p_cvxbegin(self, p):
@@ -206,6 +209,7 @@ class cvxParserGP(object):
         '''
         if p[2] == '<=' or p[2] == '<':
             p[0] = [ p[1] <= p[3], p[3] >= p[5] ]
+            print p[0]
         else:
             p[0] = [ p[1] >= p[3], p[3] <= p[5] ]
 
@@ -215,17 +219,41 @@ class cvxParserGP(object):
                       | posy LESSTHANEQUAL mono
                       | mono GREATERTHANEQUAL posy
         '''
+        """
         if p[2] == '==':
             p[0] = [p[1] == p[3]]
         elif p[2] == '<=' or p[2] == '<':
             p[0] = [p[1] <= p[3]]
         else: # p[2] == '>=' or p[2] == '>':
             p[0] = [p[1] >= p[3]]
-
-
+        """
+        if p[2] == '==':
+            tmp = p[1].mono_division_by_mono(p[3])
+            self.constraints.append([tmp,'==',1])
+        elif p[2] == '<=' or p[2] == '<':
+            tmp = p[1].posy_division_by_mono(p[3])
+            self.constraints.append([tmp,'<=',1])
+        elif p[2] == '>=' or p[2] == '>':
+            tmp = p[3].posy_division_by_mono(p[1])
+            self.constraints.append([tmp,'<=',1])
+        #print 'p_constraints'
+        """
+        for i in self.constraints:
+            if (type(i[0]) == 'Monomial'):
+                print i.monoDict
+            elif (type(i[0]) == 'Posynomial'):
+                for j in i[0].posyList:
+                    print j.monoDict
+                    print '+'
+            print i[1],i[2]
+        """
     def p_monomial_prod(self, p):
         '''mono : mono TIMES mono'''
         p[0] = p[1].mono_times_mono(p[3])
+        """
+        print 'p_monomial_prod'
+        print p[0].monoDict
+        """
 
     def p_monomial_div(self, p):
         '''mono : mono DIVIDE mono'''
@@ -246,16 +274,28 @@ class cvxParserGP(object):
             p[0] = Monomial().mono_addCoeff(int(p[1]))
         else:
             p[0] = Monomial().mono_multiply(1, p[1][0], 1)
-
-
+        """
+        print 'p_monomial_const'
+        print p[0].monoDict
+        """
     def p_posynomial(self, p):
         '''posy : mono'''
         p[0] = Posynomial().posy_add_mono(p[1])
 
+        """
+        print 'p_posynomial'
+        for i in p[0].posyList:
+            print i.monoDict
+        """
 
     def p_posynomial_add(self, p):
         '''posy : posy PLUS posy'''
         p[0] = p[1].posy_add_posy(p[3])
+        """
+        print 'p_posynomial_add'
+        for i in p[0].posyList:
+            print i.monoDict
+        """
 
     def p_posynomial_prod(self, p):
         '''posy : posy TIMES posy'''
