@@ -7,7 +7,7 @@ from ply import yacc
 ##from . properties.sign import Neither, Positive, Negative
 ##from . properties.shape import Scalar, Shape, isscalar
 import numpy as np
-
+from Monomial import *
 
 #var is a list of 2 elements: [varname(string), dimension/idx(int)]  #note, if var is encountered in objective, the int is its dimension, else if its in a constraint, its the index
 #varlist is a list of vars
@@ -204,24 +204,31 @@ class cvxParserGP(object):
 
     def p_monomial_prod(self, p):
         '''mono : mono TIMES mono'''
-        #p[0] = p[1] * p[3]
-        pass
+        p[0] = p[1].mono_times_mono(p[3])
+        print 'prod', p[0]
 
     def p_monomial_div(self, p):
         '''mono : mono DIVIDE mono'''
-        pass
+        p[0] = p[1].mono_division_by_mono(p[3])
 
     def p_monomial_power(self, p):
         '''mono : mono POWER FLOAT
                 | mono POWER INT'''
-        pass
+        p[0] = p[1].mono_raise_to_pow(float(p[3]))
+        print 'power', p[0]
+
 
     def p_monomial_const(self, p):  #p[0] is a string (if its ID) or a number
         '''mono : var
                 | INT
                 | FLOAT'''
-        #print p[1]
-        #p[0] = var
+        if isinstance(p[1], float):
+            p[0] = Monomial().mono_addCoeff(float(p[1]))
+        elif isinstance(p[1], int):
+            p[0] = Monomial().mono_addCoeff(int(p[1]))
+        else:
+            p[0] = Monomial().mono_addterm(1, p[1][0], 1)
+
 
     def p_posynomial(self, p):
         '''posy : mono'''

@@ -1,7 +1,7 @@
 This is a document of TODO items that we are currently leaving behind, and may come back to later.
 
 
-1) 
+1)
 #this doesnt work: cant handle : 2*x(1) + x(2) >= 14
 string = """
 cvx_begin
@@ -17,3 +17,5 @@ cvx_end
 
 
 
+2)
+Add checks for variable dimension. if x(3) is declared, x(>3) should not be accessed
