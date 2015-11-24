@@ -19,3 +19,6 @@ cvx_end
 
 2)
 Add checks for variable dimension. if x(3) is declared, x(>3) should not be accessed
+
+
+3) implement __add__ instead of posy_add_posy()

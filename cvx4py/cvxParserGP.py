@@ -8,6 +8,7 @@ from ply import yacc
 ##from . properties.shape import Scalar, Shape, isscalar
 import numpy as np
 from Monomial import *
+from Posynomial import *
 
 #var is a list of 2 elements: [varname(string), dimension/idx(int)]  #note, if var is encountered in objective, the int is its dimension, else if its in a constraint, its the index
 #varlist is a list of vars
@@ -200,12 +201,9 @@ class cvxParserGP(object):
             p[0] = [p[1] >= p[3]]
 
 
-
-
     def p_monomial_prod(self, p):
         '''mono : mono TIMES mono'''
         p[0] = p[1].mono_times_mono(p[3])
-        print 'prod', p[0]
 
     def p_monomial_div(self, p):
         '''mono : mono DIVIDE mono'''
@@ -215,8 +213,6 @@ class cvxParserGP(object):
         '''mono : mono POWER FLOAT
                 | mono POWER INT'''
         p[0] = p[1].mono_raise_to_pow(float(p[3]))
-        print 'power', p[0]
-
 
     def p_monomial_const(self, p):  #p[0] is a string (if its ID) or a number
         '''mono : var
@@ -227,28 +223,29 @@ class cvxParserGP(object):
         elif isinstance(p[1], int):
             p[0] = Monomial().mono_addCoeff(int(p[1]))
         else:
-            p[0] = Monomial().mono_addterm(1, p[1][0], 1)
+            p[0] = Monomial().mono_multiply(1, p[1][0], 1)
 
 
     def p_posynomial(self, p):
         '''posy : mono'''
-        pass
+        p[0] = Posynomial().posy_add_mono(p[1])
+
 
     def p_posynomial_add(self, p):
         '''posy : posy PLUS posy'''
-        pass
+        p[0] = p[1].posy_add_posy(p[3])
 
     def p_posynomial_prod(self, p):
         '''posy : posy TIMES posy'''
-        pass
+        p[0] = p[1].posy_times_posy(p[3])
 
     def p_posynomial_div(self, p):
         '''posy : posy DIVIDE mono'''
-        pass
+        p[0] = p[1].posy_division_by_mono(p[3])
 
     def p_posynomial_power(self, p):
         '''posy : posy POWER INT'''
-        pass
+        p[0] = p[1].posy_power(int(p[3]))
 
     def p_error(self, t):
         print("Syntax error at '%s'" % t.value)
