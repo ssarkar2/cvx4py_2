@@ -30,6 +30,7 @@ class cvxParserGP(object):
         self.parserObj = yacc.yacc(module = self)
         self.locals = locals
         self.decl_vars = {}
+        self.VarDeclaration = []
 
     def parse(self, cvxProgramString):
         return self.parserObj.parse(cvxProgramString)
@@ -103,6 +104,8 @@ class cvxParserGP(object):
             #self.decl_variables[name] = Variable(name, shape)
         self.addVar(p[2])
         print p[2][0] + ' = Variable(' + str(p[2][1]) + ')'
+        self.VarDeclaration.append(p[2][0] + ' = Variable(' + str(p[2][1]) + ')')
+        #print(self.VarDeclaration)
         pass
 
     def p_create_identifiers(self,p):
@@ -112,6 +115,8 @@ class cvxParserGP(object):
         for item in p[2]:
             self.addVar(item)
             print item[0] + ' = Variable(' + str(item[1]) + ')'
+            self.VarDeclaration.append(item[0] + ' = Variable(' + str(item[1]) + ')')
+            #print(self.VarDeclaration)
         pass
 
     def p_create_dual_variable(self, p):
