@@ -59,7 +59,10 @@ class cvxParserGP(object):
 
     def p_objective(self,p):
         '''objective : SENSE posy NL
-                     | SENSE posy NL SUBJECT TO NL'''
+                     | SENSE posy NL SUBJECT TO NL
+                     | SENSE mono NL
+                     | SENSE mono NL SUBJECT TO NL
+        '''
 
         #p[0] = ProgramObjectiveGP(p[1],p[2])
 
@@ -69,7 +72,7 @@ class cvxParserGP(object):
             self.Objective.append('minimize')
             self.Objective.append(p[2])
 
-        elif(p[1] == 'maximize'and len(p[2].posyList)==1): # or ['maximize',<Monomial object>]
+        elif(p[1] == 'maximize'and isinstance(p[2],Monomial)): # or ['maximize',<Monomial object>]
             self.Objective.append('maximize')
             self.Objective.append(p[2])
 
@@ -79,8 +82,11 @@ class cvxParserGP(object):
             self.Objective.append(p[2])
 
         print self.Objective[0]
-        for i in self.Objective[1].posyList:
-            print i.monoDict
+        if isinstance(p[2],Posynomial):
+            for i in self.Objective[1].posyList:
+                print i.monoDict
+        else:
+            print self.Objective[1].monoDict
         pass
 
     def p_cvxbegin(self, p):
@@ -279,8 +285,8 @@ class cvxParserGP(object):
         print p[0].monoDict
         """
     def p_posynomial(self, p):
-        '''posy : mono'''
-        p[0] = Posynomial().posy_add_mono(p[1])
+        '''posy : mono PLUS mono'''
+        p[0] = (Posynomial().posy_add_mono(p[1])).posy_add_mono(p[3])
 
         """
         print 'p_posynomial'
@@ -288,14 +294,24 @@ class cvxParserGP(object):
             print i.monoDict
         """
 
-    def p_posynomial_add(self, p):
-        '''posy : posy PLUS posy'''
+    def p_posynomial_add_posynomial(self, p):
+        '''posy : posy PLUS posy '''
         p[0] = p[1].posy_add_posy(p[3])
-        """
-        print 'p_posynomial_add'
+        print 'p_posynomial_add_posynomial'
+
         for i in p[0].posyList:
             print i.monoDict
-        """
+
+    def p_posynomial_add_monomial(self,p):
+        ''' posy : posy PLUS mono  '''
+        p[0] = p[1].posy_add_mono(p[3])
+
+
+        print 'p_posynomial_add_monomial'
+
+        for i in p[0].posyList:
+            print i.monoDict
+
 
     def p_posynomial_prod(self, p):
         '''posy : posy TIMES posy'''
