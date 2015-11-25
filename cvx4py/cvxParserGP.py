@@ -279,7 +279,7 @@ class cvxParserGP(object):
         elif isinstance(p[1], int):
             p[0] = Monomial().mono_addCoeff(int(p[1]))
         else:
-            p[0] = Monomial().mono_multiply(1, p[1][0], 1)
+            p[0] = Monomial().mono_multiply(1, p[1][0], float(p[1][1]))
         """
         print 'p_monomial_const'
         print p[0].monoDict
@@ -305,10 +305,7 @@ class cvxParserGP(object):
     def p_posynomial_add_monomial(self,p):
         ''' posy : posy PLUS mono  '''
         p[0] = p[1].posy_add_mono(p[3])
-
-
         print 'p_posynomial_add_monomial'
-
         for i in p[0].posyList:
             print i.monoDict
 
@@ -325,13 +322,10 @@ class cvxParserGP(object):
         '''posy : posy POWER INT'''
         p[0] = p[1].posy_power(int(p[3]))
 
-    #NEW RULE - may be useful?
-
     def p_posymonial_bracket(self,p):
         '''posy : LPAREN posy RPAREN'''
         p[0] = p[2]
 
-    #NEW RULE - may be useful?
     def p_monomial_bracket(self,p):
         '''mono : LPAREN mono RPAREN'''
         p[0] = p[2]
