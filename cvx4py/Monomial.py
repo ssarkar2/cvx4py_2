@@ -9,6 +9,8 @@
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 import copy
+import math
+
 class Monomial(object):
 
     def __init__(self, m = None, c = None):
@@ -68,6 +70,19 @@ class Monomial(object):
         for (i,j) in monoDict:
             monoDict[(i,j)] = monoDict[(i,j)]*p
         return Monomial(monoDict, pow(self.coeff,p))
+    def log_of_mono(self):
+        s = '+'
+        c_p = math.log(self.coeff)
+        seq = []
+        seq.append(str(c_p))
+
+        for i in self.monoDict:
+            s_temp = '('+str(self.monoDict[i]) + ')*' + i[0] + '[' +str(i[1]) + ']'
+            #print s_temp
+            seq.append(s_temp)
+
+
+        return s.join(seq)
 
 '''
 M = Monomial()
@@ -93,4 +108,16 @@ print M2.monoDict
 
 M.mono_raise_to_pow(2)
 print M.monoDict
+"""
+"""
+M = Monomial()
+M = M.mono_addCoeff(10)
+M = M.mono_multiply(-3,'x',1)
+M = M.mono_multiply(3,'x',2)
+M = M.mono_multiply(6,'x',3)
+M = M.mono_multiply(2,'y',1)
+M = M.mono_multiply(1,'y',3)
+
+print M.monoDict
+print M.log_of_mono()
 """
