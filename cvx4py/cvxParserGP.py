@@ -224,6 +224,8 @@ class cvxParserGP(object):
         '''constraint : mono LOGICALEQUAL mono
                       | posy LESSTHANEQUAL mono
                       | mono GREATERTHANEQUAL posy
+                      | mono LESSTHANEQUAL mono
+                      | mono GREATERTHANEQUAL mono
         '''
         """
         if p[2] == '==':
@@ -237,12 +239,21 @@ class cvxParserGP(object):
             tmp = p[1].mono_division_by_mono(p[3])
             self.constraints.append([tmp,'==',1])
         elif p[2] == '<=' or p[2] == '<':
-            tmp = p[1].posy_division_by_mono(p[3])
-            self.constraints.append([tmp,'<=',1])
+            if isinstance(p[1], Posynomial):
+                tmp = p[1].posy_division_by_mono(p[3])
+                self.constraints.append([tmp,'<=',1])
+            else:
+                tmp = p[1].mono_division_by_mono(p[3])
+                self.constraints.append([tmp,'<=',1])
         elif p[2] == '>=' or p[2] == '>':
-            tmp = p[3].posy_division_by_mono(p[1])
-            self.constraints.append([tmp,'<=',1])
+            if isinstance(p[3], Posynomial):
+                tmp = p[3].posy_division_by_mono(p[1])
+                self.constraints.append([tmp,'<=',1])
+            else:
+                tmp = p[3].mono_division_by_mono(p[1])
+                self.constraints.append([tmp,'<=',1])
         #print 'p_constraints'
+
         """
         for i in self.constraints:
             if (type(i[0]) == 'Monomial'):
@@ -298,7 +309,6 @@ class cvxParserGP(object):
         '''posy : posy PLUS posy '''
         p[0] = p[1].posy_add_posy(p[3])
         print 'p_posynomial_add_posynomial'
-
         for i in p[0].posyList:
             print i.monoDict
 
