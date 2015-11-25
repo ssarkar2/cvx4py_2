@@ -31,7 +31,8 @@ class cvxParserGP(object):
         self.locals = locals
         self.decl_vars = {}
         self.VarDeclaration = []
-        self.constraints = []
+        self.eqConstraints = []  #should be in canonical form mono == 1
+        self.ineqConstraints = [] #should ne in canonical form posy <= 1
 
     def parse(self, cvxProgramString):
         return self.parserObj.parse(cvxProgramString)
@@ -211,6 +212,8 @@ class cvxParserGP(object):
     def p_chained_constraint(self, p):
         '''chained_constraint : posy LESSTHANEQUAL mono GREATERTHANEQUAL posy
                       | mono GREATERTHANEQUAL posy LESSTHANEQUAL mono
+                      | mono LOGICALEQUAL mono GREATERTHANEQUAL posy
+                      | posy LESSTHANEQUAL mono LOGICALEQUAL mono
 
         '''
         if p[2] == '<=' or p[2] == '<':
@@ -237,22 +240,23 @@ class cvxParserGP(object):
         """
         if p[2] == '==':
             tmp = p[1].mono_division_by_mono(p[3])
-            self.constraints.append([tmp,'==',1])
+            self.eqConstraints.append(tmp)
         elif p[2] == '<=' or p[2] == '<':
             if isinstance(p[1], Posynomial):
                 tmp = p[1].posy_division_by_mono(p[3])
-                self.constraints.append([tmp,'<=',1])
+                self.ineqConstraints.append(tmp)
             else:
                 tmp = p[1].mono_division_by_mono(p[3])
-                self.constraints.append([tmp,'<=',1])
+                self.ineqConstraints.append(tmp)
         elif p[2] == '>=' or p[2] == '>':
             if isinstance(p[3], Posynomial):
                 tmp = p[3].posy_division_by_mono(p[1])
-                self.constraints.append([tmp,'<=',1])
+                self.ineqConstraints.append(tmp)
             else:
                 tmp = p[3].mono_division_by_mono(p[1])
-                self.constraints.append([tmp,'<=',1])
-        #print 'p_constraints'
+                self.ineqConstraints.append(tmp)
+        #print self.ineqConstraints
+        #print self.eqConstraints
 
         """
         for i in self.constraints:

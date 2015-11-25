@@ -80,12 +80,23 @@ class cvx4py(object):
         self.program = self.parserObjGP.parse(self.cvxProgramString)
         #print self.program
 
+    def gpCodegen(self):
+        varDecl = self.parserObjGP.VarDeclaration
+        objective = self.parserObjGP.Objective
+        ineqConstraints = self.parserObjGP.ineqConstraints
+        eqConstraints = self.parserObjGP.eqConstraints
+        print ineqConstraints
+        print eqConstraints
+        print varDecl
+        print objective
+
     def solveProblem(self):
         print "Starting..."
         print self.cvxProgramString
 
         if (self.isGPMode()):
             self.gpparse()
+            self.gpCodegen();
             pass
         else:
             self.parse()
