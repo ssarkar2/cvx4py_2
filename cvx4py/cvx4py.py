@@ -80,17 +80,9 @@ class cvx4py(object):
         self.program = self.parserObjGP.parse(self.cvxProgramString)
         #print self.program
 
-    def gpCodegen(self):
-        varDecl = self.parserObjGP.VarDeclaration
-        objective = self.parserObjGP.Objective
-        ineqConstraints = self.parserObjGP.ineqConstraints
-        eqConstraints = self.parserObjGP.eqConstraints
-        #print ineqConstraints
-        #print eqConstraints
-        #print varDecl
-        #print objective
 
-    def gpCanonicalize(self):
+    def gpCodegen(self):
+        self.program = []
         varDecl = self.parserObjGP.VarDeclaration
         objective = self.parserObjGP.Objective
         ineqConstraints = self.parserObjGP.ineqConstraints
@@ -98,6 +90,31 @@ class cvx4py(object):
         print varDecl
         numVars = sum([itr[1] for itr in varDecl])
         print numVars
+        print varDecl
+
+        #generate a mapping from current variables to an index number
+        self.origToNew = {}; self.newToOrig = {}
+        count = 0;
+        for itr in varDecl:
+            for x in range(itr[1]):
+                self.origToNew[(itr[0], x+1)] = count
+                self.newToOrig[count] = (itr[0], x+1)
+                count = count + 1
+
+        print self.origToNew
+        print self.newToOrig
+        print objective
+
+        #generate variable declaration
+        self.program = self.program + ['Variable x(' + str(numVars) + ')']
+
+        #generate objective string
+        self.program = self.program + [objective[0] + ' ' + objective[1].log_of_mono(self.origToNew)]
+
+
+
+        print '\n'.join(self.program)
+
 
 
 
@@ -107,7 +124,6 @@ class cvx4py(object):
 
         if (self.isGPMode()):
             self.gpparse()
-            self.gpCanonicalize()
             self.gpCodegen()
             pass
         else:

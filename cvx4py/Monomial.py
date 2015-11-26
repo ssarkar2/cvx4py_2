@@ -70,19 +70,17 @@ class Monomial(object):
         for (i,j) in monoDict:
             monoDict[(i,j)] = monoDict[(i,j)]*p
         return Monomial(monoDict, pow(self.coeff,p))
-    def log_of_mono(self):
-        s = '+'
+    def log_of_mono(self, newVar):
         c_p = math.log(self.coeff)
         seq = []
         seq.append(str(c_p))
 
         for i in self.monoDict:
-            s_temp = '('+str(self.monoDict[i]) + ')*' + i[0] + '[' +str(i[1]) + ']'
-            #print s_temp
+            s_temp = '('+str(self.monoDict[i]) + ')*' + 'x[' + str(newVar[i]) + ']'
             seq.append(s_temp)
 
 
-        return s.join(seq)
+        return '+'.join(seq)
 
 '''
 M = Monomial()
