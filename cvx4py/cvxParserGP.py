@@ -114,8 +114,7 @@ class cvxParserGP(object):
             #self.decl_variables[name] = Variable(name, shape)
         self.addVar(p[2])
         print p[2][0] + ' = Variable(' + str(p[2][1]) + ')'
-        self.VarDeclaration.append(p[2][0] + ' = Variable(' + str(p[2][1]) + ')')
-        #print(self.VarDeclaration)
+        self.VarDeclaration.append((p[2][0], p[2][1]))
         pass
 
     def p_create_identifiers(self,p):
@@ -125,7 +124,7 @@ class cvxParserGP(object):
         for item in p[2]:
             self.addVar(item)
             print item[0] + ' = Variable(' + str(item[1]) + ')'
-            self.VarDeclaration.append(item[0] + ' = Variable(' + str(item[1]) + ')')
+            self.VarDeclaration.append((item[0], item[1]))
             #print(self.VarDeclaration)
         pass
 
@@ -214,6 +213,9 @@ class cvxParserGP(object):
                       | mono GREATERTHANEQUAL posy LESSTHANEQUAL mono
                       | mono LOGICALEQUAL mono GREATERTHANEQUAL posy
                       | posy LESSTHANEQUAL mono LOGICALEQUAL mono
+                      | mono LESSTHANEQUAL posy GREATERTHANEQUAL mono
+                      | mono LESSTHANEQUAL mono GREATERTHANEQUAL mono
+                      | mono LESSTHANEQUAL mono LESSTHANEQUAL mono
 
         '''
         if p[2] == '<=' or p[2] == '<':
@@ -294,7 +296,12 @@ class cvxParserGP(object):
         elif isinstance(p[1], int):
             p[0] = Monomial().mono_addCoeff(int(p[1]))
         else:
-            p[0] = Monomial().mono_multiply(1, p[1][0], float(p[1][1]))
+            temp = self.locals.get(p[1][0], None)
+            if temp is None:
+                p[0] = Monomial().mono_multiply(1, p[1][0], float(p[1][1]))
+            else:
+                p[0] = Monomial().mono_addCoeff(temp)
+
         """
         print 'p_monomial_const'
         print p[0].monoDict
@@ -327,6 +334,14 @@ class cvxParserGP(object):
     def p_posynomial_prod(self, p):
         '''posy : posy TIMES posy'''
         p[0] = p[1].posy_times_posy(p[3])
+
+    def p_posynomial_prod_mono(self, p):
+        '''posy : posy TIMES mono
+                | mono TIMES posy'''
+        if isinstance(p[1], Posynomial):
+            p[0] = p[1].posy_times_mono(p[3])
+        else:
+            p[0] = p[3].posy_times_mono(p[1])
 
     def p_posynomial_div(self, p):
         '''posy : posy DIVIDE mono'''

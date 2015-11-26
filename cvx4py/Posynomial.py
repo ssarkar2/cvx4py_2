@@ -17,6 +17,9 @@ class Posynomial(object):
     def posy_times_posy(self, posy):
         return Posynomial([item[0].mono_times_mono(item[1]) for item in list(itr.product(self.posyList, posy.posyList))])
 
+    def posy_times_mono(self, mono):
+        return self.posy_times_posy(Posynomial().posy_from_mono(mono))
+
     def posy_add_posy(self, posy):
         return Posynomial(self.posyList + posy.posyList)
 

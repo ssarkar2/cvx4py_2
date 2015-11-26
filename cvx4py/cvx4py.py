@@ -85,10 +85,21 @@ class cvx4py(object):
         objective = self.parserObjGP.Objective
         ineqConstraints = self.parserObjGP.ineqConstraints
         eqConstraints = self.parserObjGP.eqConstraints
-        print ineqConstraints
-        print eqConstraints
+        #print ineqConstraints
+        #print eqConstraints
+        #print varDecl
+        #print objective
+
+    def gpCanonicalize(self):
+        varDecl = self.parserObjGP.VarDeclaration
+        objective = self.parserObjGP.Objective
+        ineqConstraints = self.parserObjGP.ineqConstraints
+        eqConstraints = self.parserObjGP.eqConstraints
         print varDecl
-        print objective
+        numVars = sum([itr[1] for itr in varDecl])
+        print numVars
+
+
 
     def solveProblem(self):
         print "Starting..."
@@ -96,7 +107,8 @@ class cvx4py(object):
 
         if (self.isGPMode()):
             self.gpparse()
-            self.gpCodegen();
+            self.gpCanonicalize()
+            self.gpCodegen()
             pass
         else:
             self.parse()
