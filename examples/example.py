@@ -97,6 +97,7 @@ y >= 0
 cvx_end
 """
 
+'''
 #this doesnt work: cant handle : 2*x(1) + x(2) >= 14
 string = """
 cvx_begin
@@ -109,24 +110,8 @@ x(1) >= 0
 x(2) >= 0
 cvx_end
 """
-
-'''
-string = """
-cvx_begin gp
-    variables w h d
-    maximize(w) %w * h * d
-    %subject to
-     %   2*(h*w+h*d) <= Awall;
-      %  w*d <= Afloor;
-       % alpha <= h/w >= beta;
-        %gamma <= d/w <= delta;
-cvx_end
-"""
 '''
 
-Awall = 4
-Afloor = 2
-alpha = 0.5; beta = 2; gamma = 0.5; delta = 2; #https://github.com/cvxr/CVX/blob/master/examples/gp_tutorial/max_volume_box.m
 
 #to do: test more and find out what doesnt work and fix it
 
@@ -134,8 +119,8 @@ alpha = 0.5; beta = 2; gamma = 0.5; delta = 2; #https://github.com/cvxr/CVX/blob
 A = np.array([[ 1., 2.], [ 0., 0.], [ 1., 3.]])
 a = np.array([[1, 2]])
 prob = cvx4py(string, 0, locals())
-prob.solveProblem();
-
+soln = prob.solveProblem();
+print soln
 
 #prob = cvx4py('myfile.cvx', 1, locals())
 #prob.solve();

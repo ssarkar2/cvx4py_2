@@ -39,6 +39,9 @@ class Posynomial(object):
         bstr = bstr + '])'
         return [astr, bstr]
 
+    def get_value_string(self, origToNew):
+        return '+ '.join([i.get_value_string(origToNew) for i in self.posyList])
+
 
 
 '''

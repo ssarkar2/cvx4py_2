@@ -6,7 +6,7 @@ from . ast.expressions import Variable
 from . ast import NodeVisitor
 from . codegens import Codegen
 from . codegens.python import PythonCodegen
-#import ecos
+import ecos
 import sys
 from Monomial import *
 from Posynomial import *
@@ -41,7 +41,7 @@ class cvx4py(object):
     def canonicalize(self):
         print 'Canonicalizing...'
         self.program.canonicalize()
-        print self.program
+        #print self.program
 
     def solver(self, params, dims):
         temp = self.prob2socp()
@@ -105,7 +105,12 @@ class cvx4py(object):
         self.program = self.program + ['x = Variable(' + str(numVars) + ')']
 
         #generate objective string
-        self.program = self.program + ['objective = ' + objective[0] + '(' + objective[1].log_of_mono(self.origToNew) + ')']
+        if isinstance(objective[1], Monomial):
+            self.program = self.program + ['objective = ' + objective[0] + '(' + objective[1].log_of_mono(self.origToNew) + ')']
+        else:
+            # todo to do: this part is untested
+            tmpp = objective[1].log_sum_exp_form(self.origToNew, self.newToOrig)
+            self.program = self.program + [tmpp[0] + '\n' + tmpp[1] + '\n' + 'objective = ' + objective[0] + '(' + 'log_sum_exp(a*x+b))']
         self.program = self.program + ['constraints = [' +','.join([' x[' +str(i)+'] >= -100' for i in range(numVars)]) + ']']   #positivity constraint
 
         #generate equality constraints
@@ -124,11 +129,14 @@ class cvx4py(object):
         self.program = self.program + ['prob.solve()']
         #self.program = self.program + ['print x.value']
 
+        #get objective value    #todo to do : actually get the objective value
+        self.program = self.program + ['objval = ' + objective[1].get_value_string(self.origToNew)]
+
+
         #code to output solution to a text file
-        self.program = self.program + ['f = open(\'soln.txt\',\'w\')\nfor i in x.value:\n    f.write(str(np.exp(i.item(0))) + \' \')\nf.close()\n']
+        self.program = self.program + ['f = open(\'soln.txt\',\'w\')\nfor i in x.value:\n    f.write(str(np.exp(i.item(0))) + \' \')\nf.write(str(objval))\nf.close()\n']
 
         self.programString = '\n'.join(self.program)
-        #print self.programString
         self.dumpToFile("cvxpy_code.py")
 
 
@@ -143,17 +151,17 @@ class cvx4py(object):
         f = open('soln.txt','r')
         soln = [float(i) for i in f.read().split()]
         self.solnDict = {}
-        for i in range(len(soln)):
+        for i in range(len(soln)-1):
             origVar = self.newToOrig[i]
             t = self.solnDict.get(origVar[0], None)
             if t is None:
                 self.solnDict[origVar[0]] = soln[i]
             else:
-                print type(t)
                 if isinstance(t, float):
                     self.solnDict[origVar[0]] = [self.solnDict[origVar[0]], soln[i]]
                 else:
                     self.solnDict[origVar[0]].append(soln[i])
+        self.solnDict['objval'] = soln[-1] #the first numbers on the file are values of the variables, the last number is the objective value
 
 
     def solveProblem(self):
@@ -164,12 +172,12 @@ class cvx4py(object):
             self.gpparse()
             self.gpCodegen()
             self.getAnswer()
-            return self.solnDict
         else:
             self.parse()
-            res = self.solve(self.locals)
-            self.codegen()
-            self.save("problemPython")
+            self.solnDict = self.solve(self.locals)
+            #self.codegen()
+            #self.save("problemPython")
+        return self.solnDict
 
 
 

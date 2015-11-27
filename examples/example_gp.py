@@ -32,7 +32,7 @@ cvx_end
 string = """
 cvx_begin gp
     variables w hd(2) x(3)
-    maximize( w * hd(1) * hd(2) )
+    maximize( w * hd(1) * hd(2))
     subject to
         2*(hd(1)*w+hd(1)*hd(2)) <= Awall;
         w*hd(2) <= Afloor;

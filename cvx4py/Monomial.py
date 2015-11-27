@@ -81,6 +81,9 @@ class Monomial(object):
                 string = string + str(tmp) +','
         return string + ']'
 
+    def get_value_string(self, origToNew):
+        return str(self.coeff) + '*' + '*'.join(['np.exp(x.value.item('+str(origToNew[i])+'))' for i in self.monoDict.keys()])
+
 '''
 M = Monomial()
 m1 = M.mono_addterm(-1,'x',1)

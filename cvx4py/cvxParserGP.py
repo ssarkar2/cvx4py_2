@@ -81,6 +81,9 @@ class cvxParserGP(object):
             self.Objective.append('minimize')
             p[2] = Monomial()
             self.Objective.append(p[2])
+        else:
+            print 'Error in objective'
+
 
         '''
         print self.Objective[0]
