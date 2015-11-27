@@ -10,6 +10,7 @@ from . codegens.python import PythonCodegen
 import sys
 from Monomial import *
 from Posynomial import *
+import os
 class cvx4py(object):
     def __init__(self, cvxProgram, readFromFile, locals = {}):
         if readFromFile == 0:
@@ -112,29 +113,35 @@ class cvx4py(object):
 
         #generate objective string
         self.program = self.program + ['objective = ' + objective[0] + '(' + objective[1].log_of_mono(self.origToNew) + ')']
-        self.program = self.program + ['constraints = [x[0] >= -100, x[1] >= -100, x[2] >= -100]']
+        self.program = self.program + ['constraints = [' +','.join([' x[' +str(i)+'] >= -100' for i in range(numVars)]) + ']']   #positivity constraint
 
         #generate equality constraints
-        self.program = self.program + ['constraints = constraints + [' + itr.log_of_mono(self.origToNew) + ' == 0]' for itr in eqConstraints]
+        self.program = self.program + ['constraints = constraints + [' + itr.log_of_mono(self.origToNew) + '== 0]' for itr in eqConstraints]
 
         #generate inequality constraints
         for itr in ineqConstraints:
             if isinstance(itr, Monomial):
-                self.program = self.program + ['constraints = constraints + [' + itr.log_of_mono(self.origToNew) + ' <= 0]']
+                self.program = self.program + ['constraints = constraints + [' + itr.log_of_mono(self.origToNew) + '<= 0]']
             else:
-                self.program = self.program + [itr.log_sum_exp_form(self.origToNew, self.newToOrig) + '\n' + 'constraints = constraints + [log_sum_exp(t*x) <= 0]']
+                tmpp = itr.log_sum_exp_form(self.origToNew, self.newToOrig)
+                self.program = self.program + [tmpp[0] + '\n' + tmpp[1] + '\nconstraints = constraints + [log_sum_exp(a*x+b) <= 0]']
 
         #generale solve string
         self.program = self.program + ['prob = Problem(objective, constraints)']
         self.program = self.program + ['prob.solve()']
         self.program = self.program + ['print x.value']
 
+        #code to output solution to a text file
+        self.program = self.program + ['f = open(\'soln.txt\',\'w\')\nfor i in x.value:\n    f.write(str(np.exp(i.item(0))) + \' \')\nf.close()\n']
 
         self.programString = '\n'.join(self.program)
-        self.dumpToFile()
+        print self.programString
+        self.dumpToFile("cvxpy_code.py")
+        os.system('python cvxpy_code.py')
 
-    def dumpToFile(self):
-        cvxpyFile = open("cvxpy_code.py", "w")
+
+    def dumpToFile(self, filename):
+        cvxpyFile = open(filename, "w")
         cvxpyFile.write(self.programString)
         cvxpyFile.close()
 
@@ -146,7 +153,6 @@ class cvx4py(object):
         if (self.isGPMode()):
             self.gpparse()
             self.gpCodegen()
-            pass
         else:
             self.parse()
             res = self.solve(self.locals)

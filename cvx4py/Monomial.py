@@ -75,11 +75,11 @@ class Monomial(object):
     def log_of_mono(self, newVar):
         c_p = math.log(self.coeff)
         seq = []
-        seq.append(str(c_p))
+        seq.append(str(c_p) + ' ')
         for i in self.monoDict:
-            s_temp = '('+str(self.monoDict[i]) + ')*' + 'x[' + str(newVar[i]) + ']'
+            s_temp = '('+ str(self.monoDict[i]) + ')*' + 'x[' + str(newVar[i]) + '] '
             seq.append(s_temp)
-        return '+'.join(seq)
+        return '+ '.join(seq)
 
     def get_array_string(self, origToNew, newToOrig):
         string = '['

@@ -30,11 +30,14 @@ class Posynomial(object):
         return Posynomial([iter.mono_division_by_mono(mono) for iter in self.posyList])
 
     def log_sum_exp_form(self, origToNew, newToOrig):
-        str = 't = np.array(['
+        astr = 'a = np.array(['
+        bstr = 'b = np.array(['
         for itr in self.posyList:
-            str = str + itr.get_array_string(origToNew, newToOrig) + ','
-        str = str + '])'
-        return str
+            astr = astr + itr.get_array_string(origToNew, newToOrig) + ','
+            bstr = bstr + '[np.log(' + str(itr.coeff) +')],'
+        astr = astr + '])'
+        bstr = bstr + '])'
+        return [astr, bstr]
 
 
 
