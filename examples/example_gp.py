@@ -31,7 +31,7 @@ cvx_end
 
 string = """
 cvx_begin gp
-    variables w hd(2) x
+    variables w hd(2) x(3)
     maximize( w * hd(1) * hd(2) )
     subject to
         2*(hd(1)*w+hd(1)*hd(2)) <= Awall;
@@ -42,10 +42,13 @@ cvx_begin gp
         %%gamma <= hd(2)/w <= delta;
         gamma <= hd(2)/w
         hd(2)/w <= delta
-        x^2 == 1
+        x(1)^2 == 1
+        x(2)^2 == 2
+        x(3) == 3
 cvx_end
 """
 
 
 prob = cvx4py(string, 0, locals())
-prob.solveProblem();
+soln = prob.solveProblem();
+print soln

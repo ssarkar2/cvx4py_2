@@ -28,3 +28,5 @@ Add checks for variable dimension. if x(3) is declared, x(>3) should not be acce
 5) mono == mono == mono == mono is also possible. implement that ?
 
 6) chained constraints in GP
+
+7)feasibility problem (if no objective or constant objecive)

@@ -22,7 +22,7 @@ class cvx4py(object):
         self.cvxProgramString = self.cvxProgramString.strip().split('\n')
         self.cvxProgramString = '\n'.join(line.strip() for line in self.cvxProgramString)
         self.cvxProgramString += '\n'
-        print self.cvxProgramString
+        #print self.cvxProgramString
         self.locals = locals
 
     def prob2socp(self):
@@ -35,7 +35,7 @@ class cvx4py(object):
         print 'Parsing...'
         self.parserObj = cvxParser(self.locals)  #create a parser class and then call the parse function on it.
         self.program = self.parserObj.parse(self.cvxProgramString)
-        print self.program
+        #print self.program
 
 
     def canonicalize(self):
@@ -90,10 +90,7 @@ class cvx4py(object):
         objective = self.parserObjGP.Objective
         ineqConstraints = self.parserObjGP.ineqConstraints
         eqConstraints = self.parserObjGP.eqConstraints
-        #print varDecl
         numVars = sum([itr[1] for itr in varDecl])
-        #print numVars
-        #print varDecl
 
         #generate a mapping from current variables to an index number
         self.origToNew = {}; self.newToOrig = {}
@@ -103,10 +100,6 @@ class cvx4py(object):
                 self.origToNew[(itr[0], x+1)] = count
                 self.newToOrig[count] = (itr[0], x+1)
                 count = count + 1
-
-        print self.origToNew
-        print self.newToOrig
-        #print objective
 
         #generate variable declaration
         self.program = self.program + ['x = Variable(' + str(numVars) + ')']
@@ -129,15 +122,14 @@ class cvx4py(object):
         #generale solve string
         self.program = self.program + ['prob = Problem(objective, constraints)']
         self.program = self.program + ['prob.solve()']
-        self.program = self.program + ['print x.value']
+        #self.program = self.program + ['print x.value']
 
         #code to output solution to a text file
         self.program = self.program + ['f = open(\'soln.txt\',\'w\')\nfor i in x.value:\n    f.write(str(np.exp(i.item(0))) + \' \')\nf.close()\n']
 
         self.programString = '\n'.join(self.program)
-        print self.programString
+        #print self.programString
         self.dumpToFile("cvxpy_code.py")
-        os.system('python cvxpy_code.py')
 
 
     def dumpToFile(self, filename):
@@ -146,13 +138,33 @@ class cvx4py(object):
         cvxpyFile.close()
 
 
+    def getAnswer(self):
+        os.system('python cvxpy_code.py')
+        f = open('soln.txt','r')
+        soln = [float(i) for i in f.read().split()]
+        self.solnDict = {}
+        for i in range(len(soln)):
+            origVar = self.newToOrig[i]
+            t = self.solnDict.get(origVar[0], None)
+            if t is None:
+                self.solnDict[origVar[0]] = soln[i]
+            else:
+                print type(t)
+                if isinstance(t, float):
+                    self.solnDict[origVar[0]] = [self.solnDict[origVar[0]], soln[i]]
+                else:
+                    self.solnDict[origVar[0]].append(soln[i])
+
+
     def solveProblem(self):
         print "Starting..."
-        print self.cvxProgramString
+        #print self.cvxProgramString
 
         if (self.isGPMode()):
             self.gpparse()
             self.gpCodegen()
+            self.getAnswer()
+            return self.solnDict
         else:
             self.parse()
             res = self.solve(self.locals)

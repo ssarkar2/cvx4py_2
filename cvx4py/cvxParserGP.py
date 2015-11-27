@@ -98,7 +98,6 @@ class cvxParserGP(object):
                     | CVX_BEGIN GP NL
         '''
         self.mode = 1 #GP mode
-        print 'in gp mode'
 
 
     def p_cvxend(self,p):
