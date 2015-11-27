@@ -162,6 +162,13 @@ class cvx4py(object):
                 else:
                     self.solnDict[origVar[0]].append(soln[i])
         self.solnDict['objval'] = soln[-1] #the first numbers on the file are values of the variables, the last number is the objective value
+        f.close()
+        if os.name == 'nt':
+            os.system('del cvxpy_code.py')
+            os.system('del soln.txt')
+        else:
+            os.system('rm cvxpy_code.py')
+            os.system('rm soln.txt')
 
 
     def solveProblem(self):

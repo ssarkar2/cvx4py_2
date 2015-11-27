@@ -32,3 +32,5 @@ Add checks for variable dimension. if x(3) is declared, x(>3) should not be acce
 7)feasibility problem (if no objective or constant objecive)
 
 8) support ineqs/eqs of this type: x >= 1 (where x is a vector)
+
+9) there is an extra print 'ggg' in gp path. find and delete it
