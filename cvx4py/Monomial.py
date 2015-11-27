@@ -44,12 +44,9 @@ class Monomial(object):
 
     def mono_division_by_mono(self,mono2):
         div = Monomial(self.monoDict)
-        if isinstance(mono2, Monomial):
-            for (i,j) in mono2.monoDict:
-                div = div.mono_division(mono2.monoDict[(i,j)],i,j)
-            return Monomial(div.monoDict, float(self.coeff)/float(mono2.coeff))
-        else:  #if its just a number
-            return Monomial(div.monoDict, float(self.coeff)/float(mono2))
+        for (i,j) in mono2.monoDict:
+            div = div.mono_division(mono2.monoDict[(i,j)],i,j)
+        return Monomial(div.monoDict, float(self.coeff)/float(mono2.coeff))
 
 
     def mono_multiply(self,p,var_id,ind=1):

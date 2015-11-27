@@ -70,14 +70,14 @@ class cvxParserGP(object):
         self.Objective = []
 
         if(p[1] == 'minimize'):                             # Objective is a list ['minimize',<Posynomial/Monomial Object>]
-            self.Objective.append('minimize')
+            self.Objective.append('Minimize')
             self.Objective.append(p[2])
 
         elif(p[1] == 'maximize'and isinstance(p[2],Monomial)): # or ['maximize',<Monomial object>]
-            self.Objective.append('maximize')
+            self.Objective.append('Maximize')
             self.Objective.append(p[2])
 
-        elif(p[1] == 'find'):                               # or feasibility problem ['minimize',1]
+        elif(p[1] == 'find'):                               # or feasibility problem ['minimize',1]    #To do TODO: check how feasibility problems are handled
             self.Objective.append('minimize')
             p[2] = Monomial()
             self.Objective.append(p[2])

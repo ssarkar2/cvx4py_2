@@ -26,3 +26,5 @@ Add checks for variable dimension. if x(3) is declared, x(>3) should not be acce
 4) add dual variables in GP
 
 5) mono == mono == mono == mono is also possible. implement that ?
+
+6) chained constraints in GP

@@ -84,7 +84,7 @@ class cvx4py(object):
 
 
     def gpCodegen(self):
-        self.program = []
+        self.program = ['import numpy as np\nfrom cvxpy import *\n']
         varDecl = self.parserObjGP.VarDeclaration
         objective = self.parserObjGP.Objective
         ineqConstraints = self.parserObjGP.ineqConstraints
@@ -108,11 +108,11 @@ class cvx4py(object):
         #print objective
 
         #generate variable declaration
-        self.program = self.program + ['Variable x(' + str(numVars) + ')']
+        self.program = self.program + ['x = Variable(' + str(numVars) + ')']
 
         #generate objective string
         self.program = self.program + ['objective = ' + objective[0] + '(' + objective[1].log_of_mono(self.origToNew) + ')']
-        self.program = self.program + ['constraints = [X[0] >= -100, X[1] >= -100, X[2] >= -100]']
+        self.program = self.program + ['constraints = [x[0] >= -100, x[1] >= -100, x[2] >= -100]']
 
         #generate equality constraints
         self.program = self.program + ['constraints = constraints + [' + itr.log_of_mono(self.origToNew) + ' == 0]' for itr in eqConstraints]
@@ -122,16 +122,21 @@ class cvx4py(object):
             if isinstance(itr, Monomial):
                 self.program = self.program + ['constraints = constraints + [' + itr.log_of_mono(self.origToNew) + ' <= 0]']
             else:
-                self.program = self.program + [itr.log_sum_exp_form(self.origToNew, self.newToOrig) + '\n' + 'constraints = constraints + [log_sum_exp(t*X) <= 0]']
+                self.program = self.program + [itr.log_sum_exp_form(self.origToNew, self.newToOrig) + '\n' + 'constraints = constraints + [log_sum_exp(t*x) <= 0]']
 
         #generale solve string
         self.program = self.program + ['prob = Problem(objective, constraints)']
         self.program = self.program + ['prob.solve()']
+        self.program = self.program + ['print x.value']
 
 
-        print '\n'.join(self.program)
+        self.programString = '\n'.join(self.program)
+        self.dumpToFile()
 
-
+    def dumpToFile(self):
+        cvxpyFile = open("cvxpy_code.py", "w")
+        cvxpyFile.write(self.programString)
+        cvxpyFile.close()
 
 
     def solveProblem(self):

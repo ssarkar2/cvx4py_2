@@ -36,8 +36,12 @@ cvx_begin gp
     subject to
         2*(hd(1)*w+hd(1)*hd(2)) <= Awall;
         w*hd(2) <= Afloor;
-        %alpha <= hd(1)/w >= beta;
-        %gamma <= hd(2)/w <= delta;
+        %%alpha <= hd(1)/w >= beta;
+        alpha <= hd(1)/w
+        hd(1)/w >= beta
+        %%gamma <= hd(2)/w <= delta;
+        gamma <= hd(2)/w
+        hd(2)/w <= delta
         x^2 == 1
 cvx_end
 """
