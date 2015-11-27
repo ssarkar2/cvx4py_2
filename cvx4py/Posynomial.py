@@ -29,6 +29,14 @@ class Posynomial(object):
     def posy_division_by_mono(self, mono):
         return Posynomial([iter.mono_division_by_mono(mono) for iter in self.posyList])
 
+    def log_sum_exp_form(self, origToNew, newToOrig):
+        str = 't = np.array(['
+        for itr in self.posyList:
+            str = str + itr.get_array_string(origToNew, newToOrig) + ','
+        str = str + '])'
+        return str
+
+
 
 '''
 m1 = Monomial()

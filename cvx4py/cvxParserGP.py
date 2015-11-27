@@ -82,6 +82,7 @@ class cvxParserGP(object):
             p[2] = Monomial()
             self.Objective.append(p[2])
 
+        '''
         print self.Objective[0]
         if isinstance(p[2],Posynomial):
             for i in self.Objective[1].posyList:
@@ -89,6 +90,7 @@ class cvxParserGP(object):
         else:
             print self.Objective[1].monoDict
         pass
+        '''
 
     def p_cvxbegin(self, p):
         '''cvxbegin : CVX_BEGIN GP SEMICOLON
@@ -113,7 +115,7 @@ class cvxParserGP(object):
         #if(p[1] == 'variable'):
             #self.decl_variables[name] = Variable(name, shape)
         self.addVar(p[2])
-        print p[2][0] + ' = Variable(' + str(p[2][1]) + ')'
+        #print p[2][0] + ' = Variable(' + str(p[2][1]) + ')'
         self.VarDeclaration.append((p[2][0], p[2][1]))
         pass
 
@@ -123,7 +125,7 @@ class cvxParserGP(object):
             #self.decl_variables.update({name: Variable(name, shape) for (name,shape) in p[2]})
         for item in p[2]:
             self.addVar(item)
-            print item[0] + ' = Variable(' + str(item[1]) + ')'
+            #print item[0] + ' = Variable(' + str(item[1]) + ')'
             self.VarDeclaration.append((item[0], item[1]))
             #print(self.VarDeclaration)
         pass
@@ -220,7 +222,6 @@ class cvxParserGP(object):
         '''
         if p[2] == '<=' or p[2] == '<':
             p[0] = [ p[1] <= p[3], p[3] >= p[5] ]
-            print p[0]
         else:
             p[0] = [ p[1] >= p[3], p[3] <= p[5] ]
         #TO DO
@@ -289,6 +290,18 @@ class cvxParserGP(object):
                 | mono POWER INT'''
         p[0] = p[1].mono_raise_to_pow(float(p[3]))
 
+    def checkVar(self, varname, varidx):
+        temp = self.decl_vars.get(varname, None)
+        if temp is None:
+            print 'Variable not declared',varname
+            return False
+        else:
+            if temp < varidx:
+                print 'Indexing exceeds dimension:', varname, temp, varidx
+                return False
+            else:
+                return True
+
     def p_monomial_const(self, p):  #p[0] is a string (if its ID) or a number
         '''mono : var
                 | INT
@@ -300,7 +313,10 @@ class cvxParserGP(object):
         else:
             temp = self.locals.get(p[1][0], None)
             if temp is None:
-                p[0] = Monomial().mono_multiply(1, p[1][0], float(p[1][1]))
+                if self.checkVar(p[1][0], p[1][1]):
+                    p[0] = Monomial().mono_multiply(1, p[1][0], float(p[1][1]))
+                else:
+                    print 'Error: incorrectly using variable', p[1]
             else:
                 p[0] = Monomial().mono_addCoeff(temp)
 
@@ -311,7 +327,6 @@ class cvxParserGP(object):
     def p_posynomial(self, p):
         '''posy : mono PLUS mono'''
         p[0] = (Posynomial().posy_add_mono(p[1])).posy_add_mono(p[3])
-
         """
         print 'p_posynomial'
         for i in p[0].posyList:
@@ -321,16 +336,15 @@ class cvxParserGP(object):
     def p_posynomial_add_posynomial(self, p):
         '''posy : posy PLUS posy '''
         p[0] = p[1].posy_add_posy(p[3])
-        print 'p_posynomial_add_posynomial'
-        for i in p[0].posyList:
-            print i.monoDict
+        #print 'p_posynomial_add_posynomial'
+        #for i in p[0].posyList:
+        #    print i.monoDict
 
     def p_posynomial_add_monomial(self,p):
         ''' posy : posy PLUS mono  '''
         p[0] = p[1].posy_add_mono(p[3])
-        print 'p_posynomial_add_monomial'
-        for i in p[0].posyList:
-            print i.monoDict
+        #for i in p[0].posyList:
+        #    print i.monoDict
 
 
     def p_posynomial_prod(self, p):

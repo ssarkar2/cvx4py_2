@@ -8,6 +8,8 @@ from . codegens import Codegen
 from . codegens.python import PythonCodegen
 #import ecos
 import sys
+from Monomial import *
+from Posynomial import *
 class cvx4py(object):
     def __init__(self, cvxProgram, readFromFile, locals = {}):
         if readFromFile == 0:
@@ -87,10 +89,10 @@ class cvx4py(object):
         objective = self.parserObjGP.Objective
         ineqConstraints = self.parserObjGP.ineqConstraints
         eqConstraints = self.parserObjGP.eqConstraints
-        print varDecl
+        #print varDecl
         numVars = sum([itr[1] for itr in varDecl])
-        print numVars
-        print varDecl
+        #print numVars
+        #print varDecl
 
         #generate a mapping from current variables to an index number
         self.origToNew = {}; self.newToOrig = {}
@@ -103,18 +105,24 @@ class cvx4py(object):
 
         print self.origToNew
         print self.newToOrig
-        print objective
+        #print objective
 
         #generate variable declaration
         self.program = self.program + ['Variable x(' + str(numVars) + ')']
 
         #generate objective string
         self.program = self.program + ['objective = ' + objective[0] + '(' + objective[1].log_of_mono(self.origToNew) + ')']
+        self.program = self.program + ['constraints = [X[0] >= -100, X[1] >= -100, X[2] >= -100]']
 
         #generate equality constraints
-        self.program = self.program + [itr.log_of_mono(self.origToNew) + ' == 0' for itr in eqConstraints]
+        self.program = self.program + ['constraints = constraints + [' + itr.log_of_mono(self.origToNew) + ' == 0]' for itr in eqConstraints]
 
         #generate inequality constraints
+        for itr in ineqConstraints:
+            if isinstance(itr, Monomial):
+                self.program = self.program + ['constraints = constraints + [' + itr.log_of_mono(self.origToNew) + ' <= 0]']
+            else:
+                self.program = self.program + [itr.log_sum_exp_form(self.origToNew, self.newToOrig) + '\n' + 'constraints = constraints + [log_sum_exp(t*X) <= 0]']
 
         #generale solve string
         self.program = self.program + ['prob = Problem(objective, constraints)']

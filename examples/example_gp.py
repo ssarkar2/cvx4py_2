@@ -35,9 +35,9 @@ cvx_begin gp
     maximize( w * hd(1) * hd(2) )
     subject to
         2*(hd(1)*w+hd(1)*hd(2)) <= Awall;
-        w*d <= Afloor;
-        alpha <= hd(1)/w >= beta;
-        gamma <= hd(2)/w <= delta;
+        w*hd(2) <= Afloor;
+        %alpha <= hd(1)/w >= beta;
+        %gamma <= hd(2)/w <= delta;
         x^2 == 1
 cvx_end
 """
