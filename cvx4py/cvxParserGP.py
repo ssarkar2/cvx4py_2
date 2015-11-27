@@ -223,6 +223,8 @@ class cvxParserGP(object):
             print p[0]
         else:
             p[0] = [ p[1] >= p[3], p[3] <= p[5] ]
+        #TO DO
+        #fill out this function
 
 
     def p_constraint(self,p):

@@ -31,13 +31,14 @@ cvx_end
 
 string = """
 cvx_begin gp
-    variables w hd(2)
+    variables w hd(2) x
     maximize( w * hd(1) * hd(2) )
     subject to
         2*(hd(1)*w+hd(1)*hd(2)) <= Awall;
         w*d <= Afloor;
         alpha <= hd(1)/w >= beta;
         gamma <= hd(2)/w <= delta;
+        x^2 == 1
 cvx_end
 """
 

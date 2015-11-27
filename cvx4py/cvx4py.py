@@ -109,8 +109,16 @@ class cvx4py(object):
         self.program = self.program + ['Variable x(' + str(numVars) + ')']
 
         #generate objective string
-        self.program = self.program + [objective[0] + ' ' + objective[1].log_of_mono(self.origToNew)]
+        self.program = self.program + ['objective = ' + objective[0] + '(' + objective[1].log_of_mono(self.origToNew) + ')']
 
+        #generate equality constraints
+        self.program = self.program + [itr.log_of_mono(self.origToNew) + ' == 0' for itr in eqConstraints]
+
+        #generate inequality constraints
+
+        #generale solve string
+        self.program = self.program + ['prob = Problem(objective, constraints)']
+        self.program = self.program + ['prob.solve()']
 
 
         print '\n'.join(self.program)
