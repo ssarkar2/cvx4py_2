@@ -222,10 +222,7 @@ class cvxParserGP(object):
                       | mono LESSTHANEQUAL mono LESSTHANEQUAL mono
 
         '''
-        if p[2] == '<=' or p[2] == '<':
-            p[0] = [ p[1] <= p[3], p[3] >= p[5] ]
-        else:
-            p[0] = [ p[1] >= p[3], p[3] <= p[5] ]
+        pass
         #TO DO
         #fill out this function
 
@@ -237,14 +234,6 @@ class cvxParserGP(object):
                       | mono LESSTHANEQUAL mono
                       | mono GREATERTHANEQUAL mono
         '''
-        """
-        if p[2] == '==':
-            p[0] = [p[1] == p[3]]
-        elif p[2] == '<=' or p[2] == '<':
-            p[0] = [p[1] <= p[3]]
-        else: # p[2] == '>=' or p[2] == '>':
-            p[0] = [p[1] >= p[3]]
-        """
         if p[2] == '==':
             tmp = p[1].mono_division_by_mono(p[3])
             self.eqConstraints.append(tmp)

@@ -1,6 +1,6 @@
 This is a document of TODO items that we are currently leaving behind, and may come back to later.
 
-
+SOCP
 1)
 #this doesnt work: cant handle : 2*x(1) + x(2) >= 14
 string = """
@@ -15,11 +15,13 @@ x(2) >= 0
 cvx_end
 """
 
+2) dual variable like this: x > 1 : dx, instead of dx : x > 1
 
 
-2)
-Add checks for variable dimension. if x(3) is declared, x(>3) should not be accessed
+GP
+1) there is an extra print 'ggg' in gp path. find and delete it
 
+2) DONE: Add checks for variable dimension. if x(3) is declared, x(>3) should not be accessed
 
 3) implement __add__ instead of posy_add_posy()
 
@@ -32,5 +34,6 @@ Add checks for variable dimension. if x(3) is declared, x(>3) should not be acce
 7)feasibility problem (if no objective or constant objecive)
 
 8) support ineqs/eqs of this type: x >= 1 (where x is a vector)
+support sliced variables. x(2:3) >= 1
 
-9) there is an extra print 'ggg' in gp path. find and delete it
+

@@ -138,6 +138,7 @@ class cvx4py(object):
 
         self.programString = '\n'.join(self.program)
         self.dumpToFile("cvxpy_code.py")
+        print self.programString
 
 
     def dumpToFile(self, filename):
