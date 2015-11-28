@@ -171,15 +171,23 @@ class cvx4py(object):
             os.system('rm cvxpy_code.py')
             os.system('rm soln.txt')
 
+    def isSDPMode(self):
+        return 'sdp' in self.cvxProgramString.strip().split('\n')[0]
+
+    def sdpparse(self):
+        print 'Parsing SDP...'
 
     def solveProblem(self):
         print "Starting..."
         #print self.cvxProgramString
 
-        if (self.isGPMode()):
+        if self.isGPMode():
             self.gpparse()
             self.gpCodegen()
             self.getAnswer()
+        elif self.isSDPMode():
+            self.sdpparse()
+            self.solnDict = {}
         else:
             self.parse()
             self.solnDict = self.solve(self.locals)
