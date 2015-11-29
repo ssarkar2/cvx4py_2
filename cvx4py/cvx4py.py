@@ -10,6 +10,7 @@ import ecos
 import sys
 from . Monomial import *
 from . Posynomial import *
+from . sdp import *
 import os
 class cvx4py(object):
     def __init__(self, cvxProgram, readFromFile, locals = {}):
@@ -176,6 +177,9 @@ class cvx4py(object):
 
     def sdpparse(self):
         print 'Parsing SDP...'
+        parse_cvx_sdp(self.cvxProgramString, self.locals, 'cvx2py.py')
+        os.system('python cvx2py.py')
+
 
     def solveProblem(self):
         print "Starting..."

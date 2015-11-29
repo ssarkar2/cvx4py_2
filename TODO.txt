@@ -45,3 +45,8 @@ a) generate code or feed constraints etc to a function that solves it?
 b) all parameter matrices are created as cvx matrices
 
 c) if we follow hui's parser, we still need to send the parameters to the generated code. that is we need to write them out like cvx.matrix([[1,2],[3,4]) or whatever
+
+
+
+
+the solvers give a lot of prints. any way to quieten them?

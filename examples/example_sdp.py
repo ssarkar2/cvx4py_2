@@ -1,6 +1,7 @@
 from cvx4py import cvx4py
 import math
 import numpy as np
+import cvxopt as cvx
 Nt = 4
 Nr = 1
 sinr=10

@@ -27,7 +27,9 @@ config = {
                 'cvx4py.codes',
                 'cvx4py.codes.encoders',
                 'cvx4py.codes.coefficients',
-                'cvx4py.mixins'],
+                'cvx4py.mixins',
+                'cvx4py.gp',
+                'cvx4py.sdp',],
 }
 
 
