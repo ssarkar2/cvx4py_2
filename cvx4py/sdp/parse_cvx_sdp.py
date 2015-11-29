@@ -7,15 +7,6 @@ import picos as pic
 import cvxopt as cvx
 import math
 import numpy as np
-Nt = 4
-Nr = 1
-sinr=10
-gama=10**(sinr/10)
-ee=0.05
-N0=1
-sq2=math.sqrt(2)
-intra_power = math.sqrt(1) / sq2
-inter_power = math.sqrt(0.3)/ sq2
 
 #creates a problem and the optimization variables
 P = pic.Problem()
