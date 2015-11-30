@@ -199,12 +199,3 @@ class cvx4py(object):
             #self.save("problemPython")
         return self.solnDict
 
-
-
-
-
-
-
-
-
-

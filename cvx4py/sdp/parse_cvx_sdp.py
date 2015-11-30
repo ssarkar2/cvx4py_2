@@ -88,8 +88,14 @@ print P
 sol = P.solve(solver='cvxopt',verbose = 1)
 print 'optimal value:'
 print P.obj_value()
-    '''
-    print varnames
+
+f = open('soln.txt', 'w')
+f.write('objval: ' + str(P.obj_value()) + '\\n')
+'''
+
+    for itr in varnames:
+        string = string + 'f.write(' + '\'' + itr + ': \' +' + itr + '.__str__().replace(\'\\n\', \';\')+ \'\\n\') ' + '\n'
+    string = string + 'f.close()'
 
     dh.write("%s\n" % string)
     dh.close()
