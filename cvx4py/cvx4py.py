@@ -139,7 +139,7 @@ class cvx4py(object):
 
         self.programString = '\n'.join(self.program)
         self.dumpToFile("cvxpy_code.py")
-        print self.programString
+        #print self.programString
 
 
     def dumpToFile(self, filename):
@@ -148,7 +148,7 @@ class cvx4py(object):
         cvxpyFile.close()
 
 
-    def getAnswer(self):
+    def gpGetAnswer(self):
         os.system('python cvxpy_code.py')
         f = open('soln.txt','r')
         soln = [float(i) for i in f.read().split()]
@@ -165,12 +165,13 @@ class cvx4py(object):
                     self.solnDict[origVar[0]].append(soln[i])
         self.solnDict['objval'] = soln[-1] #the first numbers on the file are values of the variables, the last number is the objective value
         f.close()
-        if os.name == 'nt':
-            os.system('del cvxpy_code.py')
-            os.system('del soln.txt')
-        else:
-            os.system('rm cvxpy_code.py')
-            os.system('rm soln.txt')
+##        if os.name == 'nt':
+##            os.system('del cvxpy_code.py')
+##            os.system('del soln.txt')
+##        else:
+##            os.system('rm cvxpy_code.py')
+##            os.system('rm soln.txt')
+        self.deleteTempFiles(['cvxpy_code.py', 'soln.txt'])
 
     def isSDPMode(self):
         return 'sdp' in self.cvxProgramString.strip().split('\n')[0]
@@ -178,8 +179,28 @@ class cvx4py(object):
     def sdpparse(self):
         print 'Parsing SDP...'
         parse_cvx_sdp(self.cvxProgramString, self.locals, 'cvx2py.py')
-        os.system('python cvx2py.py')
 
+    def sdpGetAnswer(self):
+        os.system('python cvx2py.py')
+        f = open('soln_sdp.txt','r')
+        self.solnDict = {}
+        for line in f:
+            var = line.split(':')
+            if '[' in var[1]:  #its a matrix
+                pass  #To do TODO: get the matrix from the string and form a cvx.matrix
+                #self.solnDict[var[0]] = the matrix that is formed
+            else:  #its a simple number
+                self.solnDict[var[0]] = complex(var[1])
+        f.close()
+        self.deleteTempFiles(['cvx2py.py', 'soln_sdp.txt'])
+
+    def deleteTempFiles(self, filelist):
+        if os.name == 'nt':
+            delcommand = 'del'
+        else:
+            delcommand = 'rm'
+        for itr in filelist:
+            os.system(delcommand + ' ' + itr)
 
     def solveProblem(self):
         print "Starting..."
@@ -188,10 +209,10 @@ class cvx4py(object):
         if self.isGPMode():
             self.gpparse()
             self.gpCodegen()
-            self.getAnswer()
+            self.gpGetAnswer()
         elif self.isSDPMode():
             self.sdpparse()
-            self.solnDict = {}
+            self.sdpGetAnswer()
         else:
             self.parse()
             self.solnDict = self.solve(self.locals)

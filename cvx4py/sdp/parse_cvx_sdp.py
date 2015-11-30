@@ -89,7 +89,7 @@ sol = P.solve(solver='cvxopt',verbose = 1)
 print 'optimal value:'
 print P.obj_value()
 
-f = open('soln.txt', 'w')
+f = open('soln_sdp.txt', 'w')
 f.write('objval: ' + str(P.obj_value()) + '\\n')
 '''
 
