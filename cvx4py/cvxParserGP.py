@@ -38,6 +38,13 @@ class cvxParserGP(object):
     def parse(self, cvxProgramString):
         return self.parserObj.parse(cvxProgramString)
 
+    def p_program_noObj(self,p):
+        ''' program : cvxbegin statements cvxend '''
+        self.Objective = []
+        self.Objective.append('Minimize')
+        M_obj = Monomial()
+        self.Objective.append(M_obj)
+
     def p_program(self,p):
         '''program :  cvxbegin statements objective statements cvxend
                    |  cvxbegin statements objective cvxend

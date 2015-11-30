@@ -49,7 +49,15 @@ cvx_begin gp
         %x(1:2) >= -10000
 cvx_end
 """
+string = """
+cvx_begin gp
+        variables w hd(2) x(3)
+        2*(hd(1)*w+hd(1)*hd(2)) <= Awall;
+        w*hd(2) <= Afloor;
+        x(1)^2 == 1
 
+cvx_end
+"""
 
 prob = cvx4py(string, 0, locals())
 soln = prob.solveProblem();
