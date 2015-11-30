@@ -82,7 +82,7 @@ class Monomial(object):
         return string + ']'
 
     def get_value_string(self, origToNew):
-        return str(self.coeff) + '*' + '*'.join(['np.exp(x.value.item('+str(origToNew[i])+'))' for i in self.monoDict.keys()])
+        return '*'.join([str(self.coeff)]+['np.exp(x.value.item('+str(origToNew[i])+'))' for i in self.monoDict.keys()])
 
 '''
 M = Monomial()
