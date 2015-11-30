@@ -9,7 +9,7 @@ config = {
     'description': 'cvx like framework for python',
     'author': 'Arthita, Sayantan, Hui',
     'url': 'URL to get it at.',
-    'download_url': 'https://github.com/ssarkar2/cvx4py',
+    'download_url': 'https://github.com/ssarkar2/cvx4py_2',
     'author_email': 'supersarkar@gmail.com, arthitaghosh08@gmail.com, echodinghui@gmail.com',
     'version': '0.1',
     'packages': {'cvx4py'},

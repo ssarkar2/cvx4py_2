@@ -8,8 +8,7 @@ from . codegens import Codegen
 from . codegens.python import PythonCodegen
 import ecos
 import sys
-from . Monomial import *
-from . Posynomial import *
+from . gp import *
 from . sdp import *
 import os
 class cvx4py(object):

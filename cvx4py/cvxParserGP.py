@@ -7,8 +7,9 @@ from ply import yacc
 ##from . properties.sign import Neither, Positive, Negative
 ##from . properties.shape import Scalar, Shape, isscalar
 import numpy as np
-from Monomial import *
-from Posynomial import *
+from . gp import Monomial, Posynomial
+#from cvx4py.gp.Monomial import *
+#from cvx4py.gp.Posynomial import *
 
 #var is a list of 2 elements: [varname(string), dimension/idx(int)]  #note, if var is encountered in objective, the int is its dimension, else if its in a constraint, its the index
 #varlist is a list of vars
