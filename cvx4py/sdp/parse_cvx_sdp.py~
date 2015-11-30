@@ -151,6 +151,7 @@ P = pic.Problem()
 					else:
 						var = parts[0]
 					sdp.write("P.add_constraint( %s>>0 )\n" % var )
+
 	string = '''
 #display the problem
 print P
