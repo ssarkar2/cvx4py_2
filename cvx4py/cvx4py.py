@@ -164,12 +164,16 @@ class cvx4py(object):
                     self.solnDict[origVar[0]].append(soln[i])
         self.solnDict['objval'] = soln[-1] #the first numbers on the file are values of the variables, the last number is the objective value
         f.close()
-##        if os.name == 'nt':
-##            os.system('del cvxpy_code.py')
-##            os.system('del soln.txt')
-##        else:
-##            os.system('rm cvxpy_code.py')
-##            os.system('rm soln.txt')
+
+        #remove the extra variables introduced
+        extrasUsed = self.parserObjGP.extrasUsed
+        extraVarName = self.parserObjGP.extraVarName
+        poplist = []
+        for itr in range(1,extrasUsed+1):
+            for itr2 in self.solnDict.keys():
+                if extraVarName + str(itr) == itr2:
+                    poplist.append(itr2)
+        [self.solnDict.pop(itr) for itr in poplist]
         self.deleteTempFiles(['cvxpy_code.py', 'soln.txt'])
 
     def isSDPMode(self):

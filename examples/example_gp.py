@@ -49,6 +49,7 @@ cvx_begin gp
         %x(1:2) >= -10000
 cvx_end
 """
+'''
 string = """
 cvx_begin gp
         variables w hd(2) x(3)
@@ -58,7 +59,7 @@ cvx_begin gp
 
 cvx_end
 """
-
+'''
 prob = cvx4py(string, 0, locals())
 soln = prob.solveProblem();
 print soln

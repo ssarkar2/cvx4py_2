@@ -32,9 +32,9 @@ cvx_end
 string = """
 cvx_begin gp
     variables w hd(2) x(3)
-    maximize( 1)
+    maximize( w*hd(1)*hd(2))
     subject to
-        2*(hd(1)*w+hd(1)*hd(2)) <= Awall;
+        2*(hd(1)*w+hd(1)*hd(2))^5.2 <= Awall;   %posy ^ float
         w*hd(2) <= Afloor;
         %%alpha <= hd(1)/w >= beta;
         alpha <= hd(1)/w

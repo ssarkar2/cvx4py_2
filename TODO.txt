@@ -31,10 +31,15 @@ GP
 
 6) chained constraints in GP
 
-7)feasibility problem (if no objective or constant objecive)
+7)DONE: feasibility problem (if no objective or constant objecive)
 
 8) support ineqs/eqs of this type: x >= 1 (where x is a vector)
 support sliced variables. x(2:3) >= 1
+
+9) implement ggp
+9a) DONE posy^float for constraints has been implemented and checked
+9b) posy^float in objective is possibly implemented, but not checked
+9c) max ()
 
 SDP
 1) implement full parser for sdp or go with hui's string match based parser?

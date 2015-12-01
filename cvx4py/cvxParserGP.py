@@ -8,8 +8,8 @@ from ply import yacc
 ##from . properties.shape import Scalar, Shape, isscalar
 import numpy as np
 from . gp import Monomial, Posynomial
-#from cvx4py.gp.Monomial import *
-#from cvx4py.gp.Posynomial import *
+import random
+import string
 
 #var is a list of 2 elements: [varname(string), dimension/idx(int)]  #note, if var is encountered in objective, the int is its dimension, else if its in a constraint, its the index
 #varlist is a list of vars
@@ -34,6 +34,8 @@ class cvxParserGP(object):
         self.VarDeclaration = []
         self.eqConstraints = []  #should be in canonical form mono == 1
         self.ineqConstraints = [] #should ne in canonical form posy <= 1
+        self.extraVarName = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(7)) #to do TODO: theoretically this variable COULD be a user defined one (though chances are very less)
+        self.extrasUsed = 0
 
     def parse(self, cvxProgramString):
         return self.parserObj.parse(cvxProgramString)
@@ -228,7 +230,6 @@ class cvxParserGP(object):
                       | mono LESSTHANEQUAL posy GREATERTHANEQUAL mono
                       | mono LESSTHANEQUAL mono GREATERTHANEQUAL mono
                       | mono LESSTHANEQUAL mono LESSTHANEQUAL mono
-
         '''
         pass
         #TO DO
@@ -313,7 +314,7 @@ class cvxParserGP(object):
             temp = self.locals.get(p[1][0], None)
             if temp is None:
                 if self.checkVar(p[1][0], p[1][1]):
-                    p[0] = Monomial().mono_multiply(1, p[1][0], float(p[1][1]))
+                    p[0] = Monomial().mono_multiply(1, p[1][0], float(p[1][1]))  #to do TODO, shouldn't it be int(p[1][1]) ?
                 else:
                     print 'Error: incorrectly using variable', p[1]
             else:
@@ -340,7 +341,7 @@ class cvxParserGP(object):
         #    print i.monoDict
 
     def p_posynomial_add_monomial(self,p):
-        ''' posy : posy PLUS mono  '''
+        ''' posy : posy PLUS mono'''
         p[0] = p[1].posy_add_mono(p[3])
         #for i in p[0].posyList:
         #    print i.monoDict
@@ -353,6 +354,8 @@ class cvxParserGP(object):
     def p_posynomial_prod_mono(self, p):
         '''posy : posy TIMES mono
                 | mono TIMES posy'''
+        print p[1]
+        print p[3]
         if isinstance(p[1], Posynomial):
             p[0] = p[1].posy_times_mono(p[3])
         else:
@@ -365,6 +368,19 @@ class cvxParserGP(object):
     def p_posynomial_power(self, p):
         '''posy : posy POWER INT'''
         p[0] = p[1].posy_power(int(p[3]))
+
+    def p_posynomial_power2(self, p):
+        '''monoreplaced : posy POWER FLOAT'''
+        self.extrasUsed = self.extrasUsed + 1
+        self.addVar(self.extraVarName + str(self.extrasUsed))
+        self.VarDeclaration.append((self.extraVarName + str(self.extrasUsed), 1))
+        tmp = p[1].posy_division_by_mono(Monomial().mono_multiply(1, self.extraVarName + str(self.extrasUsed), 1))
+        self.ineqConstraints.append(tmp)
+        p[0] = Monomial().mono_multiply(float(p[3]), self.extraVarName + str(self.extrasUsed), 1)
+
+    def p_replaced_mono(self, p):
+        '''mono : monoreplaced'''
+        p[0] = p[1]
 
     def p_posymonial_bracket(self,p):
         '''posy : LPAREN posy RPAREN'''
