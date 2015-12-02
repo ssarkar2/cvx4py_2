@@ -21,7 +21,7 @@ cvx_end
 
 '''
 gpvar x y z             % create three scalar GP variables
-constrs = [x <= 10, y <= 20, z <= 30, x*y + y*z <= 100, (x*z + (z)*(y^0.5))^0.5 <= 50, max(x, x+z) <= 100]
+constrs = [x <= 10, y <= 20, z <= 30, x*y + y*z <= 100, (x*z + (z)*(y^0.5))^0.5 <= 50, max(x, x+z) <= 100, max(x, (x+2*z)^0.4) <= 100]
 [obj_value, solution, status] = gpsolve(x*y*z,constrs, 'max')
 assign(solution)
 '''
@@ -33,6 +33,7 @@ maximize x*y*z
 x*y + y*z <= 100
 (x*z + (z)*(y^0.5))^0.5 <= 50
 max(x, x+z) <= 100
+max(x, (x+2*z)^0.4) <= 100
 x <= 10
 y <= 20
 z <= 30
