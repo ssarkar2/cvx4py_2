@@ -29,9 +29,9 @@ class Posynomial(object):
     def posy_division_by_mono(self, mono):
         return Posynomial([iter.mono_division_by_mono(mono) for iter in self.posyList])
 
-    def log_sum_exp_form(self, origToNew, newToOrig):
-        astr = 'a = np.array(['
-        bstr = 'b = np.array(['
+    def log_sum_exp_form(self, origToNew, newToOrig, num):
+        astr = 'a' + str(num) + ' = np.array(['
+        bstr = 'b' + str(num) + ' = np.array(['
         for itr in self.posyList:
             astr = astr + itr.get_array_string(origToNew, newToOrig) + ','
             bstr = bstr + '[np.log(' + str(itr.coeff) +')],'

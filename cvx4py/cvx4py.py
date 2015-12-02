@@ -24,6 +24,7 @@ class cvx4py(object):
         self.cvxProgramString += '\n'
         #print self.cvxProgramString
         self.locals = locals
+        self.posyNum = 0
 
     def prob2socp(self):
         return self.__codegen.prob2socp
@@ -109,8 +110,9 @@ class cvx4py(object):
             self.program = self.program + ['objective = ' + objective[0] + '(' + objective[1].log_of_mono(self.origToNew) + ')']
         else:
             # todo to do: this part is untested
-            tmpp = objective[1].log_sum_exp_form(self.origToNew, self.newToOrig)
-            self.program = self.program + [tmpp[0] + '\n' + tmpp[1] + '\n' + 'objective = ' + objective[0] + '(' + 'log_sum_exp(a*x+b))']
+            self.posyNum = self.posyNum + 1
+            tmpp = objective[1].log_sum_exp_form(self.origToNew, self.newToOrig, self.posyNum)
+            self.program = self.program + [tmpp[0] + '\n' + tmpp[1] + '\n' + 'objective = ' + objective[0] + '(' + 'log_sum_exp(a' + str(self.posyNum) + '*x+b' + str(self.posyNum) + '))']
         self.program = self.program + ['constraints = [' +','.join([' x[' +str(i)+'] >= -100' for i in range(numVars)]) + ']']   #positivity constraint
 
         #generate equality constraints
@@ -121,8 +123,9 @@ class cvx4py(object):
             if isinstance(itr, Monomial):
                 self.program = self.program + ['constraints = constraints + [' + itr.log_of_mono(self.origToNew) + '<= 0]']
             else:
-                tmpp = itr.log_sum_exp_form(self.origToNew, self.newToOrig)
-                self.program = self.program + [tmpp[0] + '\n' + tmpp[1] + '\nconstraints = constraints + [log_sum_exp(a*x+b) <= 0]']
+                self.posyNum = self.posyNum + 1
+                tmpp = itr.log_sum_exp_form(self.origToNew, self.newToOrig, self.posyNum)
+                self.program = self.program + [tmpp[0] + '\n' + tmpp[1] + '\nconstraints = constraints + [log_sum_exp(a'+str(self.posyNum)+'*x+b'+str(self.posyNum)+') <= 0]']
 
         #generale solve string
         self.program = self.program + ['prob = Problem(objective, constraints)']

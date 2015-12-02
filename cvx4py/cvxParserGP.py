@@ -390,6 +390,58 @@ class cvxParserGP(object):
         '''mono : LPAREN mono RPAREN'''
         p[0] = p[2]
 
+    def p_posy_or_mono_list(self,p):  #todo TO DO: max of only 2 things allowed for now. make it more general later
+        '''list : posy COMMA mono
+                | posy COMMA posy
+                | mono COMMA posy
+                | mono COMMA mono'''
+        p[0] = [p[1], p[3]]
+
+
+    def p_posy_or_mono_list2(self,p):
+        '''list : list COMMA posy
+                | list COMMA mono'''
+        p[0] = p[1].append(p[3])
+
+
+    def p_max_func(self,p):
+        '''maxreplaced : ATOM LPAREN list RPAREN'''
+        if p[1] == 'max':
+            self.extrasUsed = self.extrasUsed + 1
+            self.addVar([self.extraVarName + str(self.extrasUsed),1])
+            self.VarDeclaration.append((self.extraVarName + str(self.extrasUsed), 1))
+            for itr in p[3]:
+                if isinstance(itr, Posynomial):
+                    tmp = itr.posy_division_by_mono(Monomial().mono_multiply(1, self.extraVarName + str(self.extrasUsed), 1))
+                    self.ineqConstraints.append(tmp)
+                else: #itr is monomial
+                    tmp = itr.mono_division_by_mono(Monomial().mono_multiply(1, self.extraVarName + str(self.extrasUsed), 1))
+                    self.ineqConstraints.append(tmp)
+
+            p[0] = Monomial().mono_multiply(1, self.extraVarName + str(self.extrasUsed), 1)
+        else:
+            print p[1], 'not supported for GP'
+            p[0] = None
+
+    def p_max_func2(self,p):
+        '''mono : ATOM LPAREN mono RPAREN'''
+        if p[1] == 'max':
+            p[0] = p[3]
+        else:
+            p[0] = None
+
+    def p_max_func3(self,p):
+        '''posy : ATOM LPAREN posy RPAREN'''
+        if p[1] == 'max':
+            p[0] = p[3]
+        else:
+            p[0] = None
+
+    def p_maxreplaced_mono(self, p):
+        '''mono : maxreplaced'''
+        p[0] = p[1]
+
+
     def p_error(self, t):
         print("Syntax error at '%s'" % t.value)
 
