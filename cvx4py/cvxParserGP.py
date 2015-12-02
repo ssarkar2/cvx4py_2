@@ -372,7 +372,7 @@ class cvxParserGP(object):
     def p_posynomial_power2(self, p):
         '''monoreplaced : posy POWER FLOAT'''
         self.extrasUsed = self.extrasUsed + 1
-        self.addVar(self.extraVarName + str(self.extrasUsed))
+        self.addVar([self.extraVarName + str(self.extrasUsed), 1])
         self.VarDeclaration.append((self.extraVarName + str(self.extrasUsed), 1))
         tmp = p[1].posy_division_by_mono(Monomial().mono_multiply(1, self.extraVarName + str(self.extrasUsed), 1))
         self.ineqConstraints.append(tmp)
