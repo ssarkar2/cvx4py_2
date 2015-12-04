@@ -154,7 +154,7 @@ P = pic.Problem()
 
 	string = '''
 #display the problem
-print P
+#print P
 
 #call to the solver cvxopt
 sol = P.solve(solver='cvxopt',verbose = 1)
@@ -166,8 +166,6 @@ f.write('objval: ' + str(P.obj_value()) + '\\n')
 '''
 
     for itr in varnames:
-        print itr
-        print itr.__str__()
         string = string + 'f.write(' + '\'' + itr + ': \' +' + itr + '.__str__().replace(\'\\n\', \';\')+ \'\\n\') ' + '\n'
     string = string + 'f.close()'
 

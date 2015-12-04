@@ -191,17 +191,19 @@ class cvx4py(object):
     def getNum(self, numstr):
         if 'j' in numstr.strip():
             #-7.56e-01-j1.43e+00
-            [real, imag] = numstr.strip().split('j') #['-7.56e-01-', '1.43e+00']
-            real = real[0:-1]  #-7.56e-01
-            real1 = float(real.split('e')[0])
-            real2 = float(real.split('e')[1])
-            imag1 = float(imag.split('e')[0])
-            imag2 = float(imag.split('e')[1])
-            return complex(real1 * (10**real2), imag1 * (10**imag2))
+##            [real, imag] = numstr.strip().split('j') #['-7.56e-01-', '1.43e+00']
+##            real = real[0:-1]  #-7.56e-01
+##            real1 = float(real.split('e')[0])
+##            real2 = float(real.split('e')[1])
+##            imag1 = float(imag.split('e')[0])
+##            imag2 = float(imag.split('e')[1])
+##            return complex(real1 * (10**real2), imag1 * (10**imag2))
+            return complex(numstr.strip().strip('()').replace('j','')+'j')
         else:
             #3.69e-01
-            [real1,real2] = numstr.strip().split('e')
-            return float(real1) * (10**float(real2))
+##            [real1,real2] = numstr.strip().split('e')
+##            return float(real1) * (10**float(real2))
+            return float(numstr.strip())
 
     def sdpGetAnswer(self):
         os.system('python cvx2py.py')
@@ -222,7 +224,7 @@ class cvx4py(object):
                         mtx.append(currrow)
                 self.solnDict[var[0]] = cvx.matrix(np.array(mtx))
             else:  #its a simple number
-                self.solnDict[var[0]] = complex(var[1])  #todo TO DO: handle it correctly if its a real, or a complex
+                self.solnDict[var[0]] = self.getNum(var[1])
         f.close()
         self.deleteTempFiles(['cvx2py.py', 'soln_sdp.txt'])
 
