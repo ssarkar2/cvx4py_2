@@ -11,6 +11,7 @@ import sys
 from . gp import *
 from . sdp import *
 import os
+import numpy as np
 class cvx4py(object):
     def __init__(self, cvxProgram, readFromFile, locals = {}):
         if readFromFile == 0:
@@ -186,6 +187,9 @@ class cvx4py(object):
         print 'Parsing SDP...'
         parse_cvx_sdp(self.cvxProgramString, self.locals, 'cvx2py.py')
 
+    def getNum(self, numstr):
+        return 1
+
     def sdpGetAnswer(self):
         os.system('python cvx2py.py')
         f = open('soln_sdp.txt','r')
@@ -193,8 +197,17 @@ class cvx4py(object):
         for line in f:
             var = line.split(':')
             if '[' in var[1]:  #its a matrix
-                pass  #To do TODO: get the matrix from the string and form a cvx.matrix
-                #self.solnDict[var[0]] = the matrix that is formed
+                rows = var[1].split(';')
+                mtx = []
+                for itr in rows:
+                    currrow = []
+                    if '[' in itr:  #its non empty
+                        tmp = itr.strip('[] ')
+                        for num in tmp.split(' '):
+                            if num != '':
+                                currrow.append(self.getNum(num))
+                    mtx.append(currrow)
+                self.solnDict[var[0]] = np.array(mtx)
             else:  #its a simple number
                 self.solnDict[var[0]] = complex(var[1])
         f.close()
