@@ -12,6 +12,7 @@ from . gp import *
 from . sdp import *
 import os
 import numpy as np
+import cvxopt as cvx
 class cvx4py(object):
     def __init__(self, cvxProgram, readFromFile, locals = {}):
         if readFromFile == 0:
@@ -188,7 +189,19 @@ class cvx4py(object):
         parse_cvx_sdp(self.cvxProgramString, self.locals, 'cvx2py.py')
 
     def getNum(self, numstr):
-        return 1
+        if 'j' in numstr.strip():
+            #-7.56e-01-j1.43e+00
+            [real, imag] = numstr.strip().split('j') #['-7.56e-01-', '1.43e+00']
+            real = real[0:-1]  #-7.56e-01
+            real1 = float(real.split('e')[0])
+            real2 = float(real.split('e')[1])
+            imag1 = float(imag.split('e')[0])
+            imag2 = float(imag.split('e')[1])
+            return complex(real1 * (10**real2), imag1 * (10**imag2))
+        else:
+            #3.69e-01
+            [real1,real2] = numstr.strip().split('e')
+            return float(real1) * (10**float(real2))
 
     def sdpGetAnswer(self):
         os.system('python cvx2py.py')
@@ -206,10 +219,10 @@ class cvx4py(object):
                         for num in tmp.split(' '):
                             if num != '':
                                 currrow.append(self.getNum(num))
-                    mtx.append(currrow)
-                self.solnDict[var[0]] = np.array(mtx)
+                        mtx.append(currrow)
+                self.solnDict[var[0]] = cvx.matrix(np.array(mtx))
             else:  #its a simple number
-                self.solnDict[var[0]] = complex(var[1])
+                self.solnDict[var[0]] = complex(var[1])  #todo TO DO: handle it correctly if its a real, or a complex
         f.close()
         self.deleteTempFiles(['cvx2py.py', 'soln_sdp.txt'])
 
