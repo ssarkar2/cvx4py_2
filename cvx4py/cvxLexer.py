@@ -40,7 +40,7 @@ class cvxLexer(object):
 
         #atoms already present in qcml
         # add more atoms
-        'norm2' : 'ATOM', 'max' : 'ATOM', 'abs' : 'ATOM',
+        'norm' : 'ATOM', 'max' : 'ATOM', 'abs' : 'ATOM',
         #fill more
         #http://cvxr.com/cvx/doc/funcref.html
     }

@@ -313,7 +313,12 @@ class cvxParser(object):
 
     def p_expression_atom(self,p):
         'expression : ATOM LPAREN arglist RPAREN'
-        p[0] = atoms[p[1]](*p[3])
+        if p[1] == 'norm2':
+            key = 'norm'
+        else:
+            key = p[1]
+        p[0] = atoms[key](*p[3])
+        print atoms
 
     def p_arglist(self, p):
         'arglist : arglist COMMA expression'
