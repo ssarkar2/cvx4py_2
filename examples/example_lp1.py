@@ -1,16 +1,18 @@
-#least squares problem
+#linear program
 
 import numpy as np
 from cvx4py import cvx4py
 
-
-A = np.array([[ 0., 0.], [ 1., 2.], [ 2., 1.], [ 2., 2.]])
-b = np.array([[0],[9],[7],[9]])
+c = np.array([[1],[2]])
+A = np.array([[1,1,-1,0], [1,-1,0,-1]]);
+b = np.array([5,1,0,0])
 
 string = """
 cvx_begin
 variables x(2)
-minimize norm(A*x - b)
+maximize c'*x
+subject to
+A'*x <= b
 cvx_end
 """
 

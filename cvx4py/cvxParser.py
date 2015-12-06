@@ -391,7 +391,10 @@ class cvxParser(object):
                 if (not temp):  #if parameter is new, then add it to param list if locals contains it
                     value = self.locals.get(p[1], None)
                     if (value is not None):
-                        param = Parameter(p[1], Shape(list(value.shape)), Neither())
+                        if (isinstance(value, int) or isinstance(value, float)):
+                            param = Parameter(p[1], Shape([1,1]), Neither())
+                        else:
+                            param = Parameter(p[1], Shape(list(value.shape)), Neither())
                         self.decl_parameters[p[1]] = param
                         p[0] = param
                         #print 'ERROR'
