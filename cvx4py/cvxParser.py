@@ -318,7 +318,6 @@ class cvxParser(object):
         else:
             key = p[1]
         p[0] = atoms[key](*p[3])
-        print atoms
 
     def p_arglist(self, p):
         'arglist : arglist COMMA expression'

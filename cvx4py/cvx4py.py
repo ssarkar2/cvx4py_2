@@ -250,7 +250,5 @@ class cvx4py(object):
         else:
             self.parse()
             self.solnDict = self.solve(self.locals)
-            #self.codegen()
-            #self.save("problemPython")
         return self.solnDict
 
