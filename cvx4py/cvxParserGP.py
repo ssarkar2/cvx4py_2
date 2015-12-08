@@ -30,6 +30,8 @@ class cvxParserGP(object):
         self.ineqConstraints = [] #should ne in canonical form posy <= 1
         self.extraVarName = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(7)) #to do TODO: theoretically this variable COULD be a user defined one (though chances are very less)
         self.extrasUsed = 0
+        self.decl_dual_variables = set()
+        self.dualVarConstraintMap = {}
 
     def parse(self, cvxProgramString):
         return self.parserObj.parse(cvxProgramString)
@@ -110,11 +112,18 @@ class cvxParserGP(object):
 
     def p_create_dual_variable(self, p):
         '''create : DUAL VARIABLE ID'''
-        pass
+        self.addDualVar(p[3])
 
     def p_create_dual_variables(self, p):
         'create : DUAL VARIABLES idlist'
-        pass
+        for itr in p[3]:
+            self.addDualVar(itr)
+
+    def addDualVar(self, dualvar):
+        if dualvar in self.decl_dual_variables:
+            print 'Error: redeclaring dual variable'
+        else:
+            self.decl_dual_variables.update([dualvar])
 
     def addVar(self, var):
         if self.decl_vars.get(var[0], None) is not None:
@@ -157,11 +166,11 @@ class cvxParserGP(object):
 
     def p_idlist_list(self,p):
         '''idlist : idlist ID'''
-        pass
+        p[0] = p[1]+ [p[2]]
 
     def p_idlist_id(self,p):
         'idlist : ID'
-        pass
+        p[0] = [p[1]]
 
     def p_statements_statement(self,p):
         '''statements : statement NL
@@ -180,6 +189,7 @@ class cvxParserGP(object):
         '''statement : constraint
                      | create
                      | chained_constraint
+                     | dual_constraint
                      | empty
         '''
         pass
@@ -197,6 +207,11 @@ class cvxParserGP(object):
         #TO DO
         #fill out this function
 
+    def p_dual_constraint(self,p):
+        'dual_constraint : ID COLON constraint'
+        self.dualVarConstraintMap[p[3]] = p[1]
+
+
 
     def p_constraint(self,p):
         '''constraint : mono LOGICALEQUAL mono
@@ -208,6 +223,7 @@ class cvxParserGP(object):
         if p[2] == '==':
             tmp = p[1].mono_division_by_mono(p[3])
             self.eqConstraints.append(tmp)
+            p[0] = (len(self.eqConstraints)-1, 'eq')  #which number equality constraint
         elif p[2] == '<=' or p[2] == '<':
             if isinstance(p[1], Posynomial):
                 tmp = p[1].posy_division_by_mono(p[3])
@@ -215,6 +231,7 @@ class cvxParserGP(object):
             else:
                 tmp = p[1].mono_division_by_mono(p[3])
                 self.ineqConstraints.append(tmp)
+            p[0] = (len(self.ineqConstraints)-1, 'ineq')
         elif p[2] == '>=' or p[2] == '>':
             if isinstance(p[3], Posynomial):
                 tmp = p[3].posy_division_by_mono(p[1])
@@ -222,6 +239,8 @@ class cvxParserGP(object):
             else:
                 tmp = p[3].mono_division_by_mono(p[1])
                 self.ineqConstraints.append(tmp)
+            p[0] = (len(self.ineqConstraints)-1, 'ineq')
+
 
 
     def p_monomial_prod(self, p):

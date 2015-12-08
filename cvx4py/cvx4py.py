@@ -93,6 +93,8 @@ class cvx4py(object):
         objective = self.parserObjGP.Objective
         ineqConstraints = self.parserObjGP.ineqConstraints
         eqConstraints = self.parserObjGP.eqConstraints
+        dualVarConstraintMap = self.parserObjGP.dualVarConstraintMap
+        numeqconstraints = len(eqConstraints)
         numVars = sum([itr[1] for itr in varDecl])
 
         #generate a mapping from current variables to an index number
@@ -137,6 +139,15 @@ class cvx4py(object):
         #get objective value    #todo to do : actually get the objective value
         self.program = self.program + ['objval = ' + objective[1].get_value_string(self.origToNew)]
 
+        self.program = self.program + ['fd = open(\'dual.txt\',\'w\')']
+        for itr in dualVarConstraintMap:  #iterate over the dictionary's keys
+            if itr[1] == 'eq':
+                self.program = self.program + ['print constraints['+str(itr[0])+'].dual_value']
+                self.program = self.program + ['fd.write(\'' +dualVarConstraintMap[itr] +':\''+ '+str(constraints[' + str(numVars+itr[0]) + '].dual_value' + ')+ \'\\n\')']
+            else: #'ineq'
+                self.program = self.program + ['fd.write(\'' +dualVarConstraintMap[itr] +':\''+ '+str(constraints[' + str(numeqconstraints + numVars+ itr[0]) + '].dual_value' + ')+ \'\\n\')'] #numVars because the first numVars consrains are x>=-100 (positivity constraint)
+        self.program = self.program + ['fd.close()']
+
 
         #code to output solution to a text file
         self.program = self.program + ['f = open(\'soln.txt\',\'w\')\nfor i in x.value:\n    f.write(str(np.exp(i.item(0))) + \' \')\nf.write(str(objval))\nf.close()\n']
@@ -157,6 +168,15 @@ class cvx4py(object):
         f = open('soln.txt','r')
         soln = [float(i) for i in f.read().split()]
         self.solnDict = {}
+
+        #read dual vars
+        f = open('dual.txt','r')
+        duals = [i for i in f.read().split()]
+        for d in duals:
+            tmp = d.split(':')
+            self.solnDict[tmp[0].strip()] = float(tmp[1].strip())
+
+
         for i in range(len(soln)-1):
             origVar = self.newToOrig[i]
             t = self.solnDict.get(origVar[0], None)
@@ -170,6 +190,8 @@ class cvx4py(object):
         self.solnDict['objval'] = soln[-1] #the first numbers on the file are values of the variables, the last number is the objective value
         f.close()
 
+
+
         #remove the extra variables introduced
         extrasUsed = self.parserObjGP.extrasUsed
         extraVarName = self.parserObjGP.extraVarName
@@ -179,7 +201,7 @@ class cvx4py(object):
                 if extraVarName + str(itr) == itr2:
                     poplist.append(itr2)
         [self.solnDict.pop(itr) for itr in poplist]
-        self.deleteTempFiles(['cvxpy_code.py', 'soln.txt'])
+        self.deleteTempFiles(['cvxpy_code.py', 'soln.txt', 'dual.txt'])
 
     def isSDPMode(self):
         return 'sdp' in self.cvxProgramString.strip().split('\n')[0]

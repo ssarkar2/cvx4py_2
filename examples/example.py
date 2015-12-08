@@ -92,7 +92,7 @@ minimize 2*x + 4*y
 2*x + y >= 14
 x + y >= 12
 x + 3*y >= 18
-x >= 0
+10 >= x >= 0
 y >= 0
 cvx_end
 """
